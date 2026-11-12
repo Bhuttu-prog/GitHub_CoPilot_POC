@@ -1,0 +1,61 @@
+name: UI Automation
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+  schedule:
+    - cron: '30 1 * * 1-5'
+  workflow_dispatch:
+    inputs:
+      grep:
+        description: 'Tag or test case filter, e.g. @smoke or TC-LOGIN'
+        required: false
+        default: '@regression'
+
+env:
+  BASE_URL: https://rahulshettyacademy.com
+  LOGIN_USERNAME: ${{ secrets.LOGIN_USERNAME }}
+  LOGIN_PASSWORD: ${{ secrets.LOGIN_PASSWORD }}
+
+jobs:
+  quality-gates:
+    name: Static quality gates
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+      - run: npm ci
+      - run: npm run typecheck
+      - run: npm run lint
+      - run: npm run format:check
+      - run: npm run tc:validate
+
+  ui-tests:
+    name: Cross-browser UI tests
+    needs: quality-gates
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+      - run: npm ci
+      - run: npx playwright install --with-deps
+      - name: Run tests
+        run: npx playwright test --grep "${{ github.event_name == 'pull_request' && '@smoke' || inputs.grep || '@regression' }}"
+      - name: Build traceability matrix
+        if: always()
+        run: npm run tc:coverage
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: test-reports
+          path: reports/
+          retention-days: 14

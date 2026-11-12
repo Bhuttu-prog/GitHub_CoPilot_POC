@@ -1,0 +1,175 @@
+{
+  "$schema": "../.cursor/skills/ui-test-case-generator/test-case.schema.json",
+  "module": "PCOM",
+  "feature": "ProtoCommerce shop, cart and checkout",
+  "application": "https://rahulshettyacademy.com/angularpractice/shop",
+  "requirements": [
+    { "id": "REQ-PCOM-01", "description": "The shop displays the full product catalogue to signed-in users." },
+    {
+      "id": "REQ-PCOM-02",
+      "description": "Customers add products to the cart and the checkout counter reflects the cart size."
+    },
+    { "id": "REQ-PCOM-03", "description": "The cart lists selected products, calculates totals and allows removal." },
+    { "id": "REQ-PCOM-04", "description": "Customers choose a delivery country, accept terms and complete a purchase." }
+  ],
+  "testCases": [
+    {
+      "id": "TC-PCOM-001",
+      "title": "Shop lists the complete product catalogue",
+      "requirementIds": ["REQ-PCOM-01"],
+      "priority": "P2",
+      "severity": "Major",
+      "type": "Functional",
+      "technique": "Checklist",
+      "tags": ["@regression", "@protocommerce"],
+      "preconditions": ["User is signed in through the login page"],
+      "testData": { "products": ["iphone X", "Samsung Note 8", "Nokia Edge", "Blackberry"] },
+      "steps": [{ "action": "Read the product titles on the shop page" }],
+      "expectedResult": "The shop shows iphone X, Samsung Note 8, Nokia Edge and Blackberry in that order.",
+      "automation": { "status": "Automated", "spec": "tests/protocommerce/shop.spec.ts" }
+    },
+    {
+      "id": "TC-PCOM-002",
+      "title": "Adding products increments the checkout counter",
+      "requirementIds": ["REQ-PCOM-02"],
+      "priority": "P1",
+      "severity": "Critical",
+      "type": "Functional",
+      "technique": "State Transition",
+      "tags": ["@smoke", "@regression", "@protocommerce"],
+      "preconditions": ["User is signed in and the cart is empty"],
+      "testData": { "products": ["iphone X", "Blackberry"] },
+      "steps": [
+        { "action": "Observe the checkout counter", "expected": "Counter shows ( 0 )" },
+        { "action": "Click Add on iphone X and Blackberry" }
+      ],
+      "expectedResult": "Checkout counter shows ( 2 ).",
+      "automation": { "status": "Automated", "spec": "tests/protocommerce/shop.spec.ts" }
+    },
+    {
+      "id": "TC-PCOM-003",
+      "title": "Cart contains exactly the products that were added",
+      "requirementIds": ["REQ-PCOM-03"],
+      "priority": "P1",
+      "severity": "Critical",
+      "type": "Functional",
+      "technique": "Use Case",
+      "tags": ["@smoke", "@regression", "@protocommerce"],
+      "preconditions": ["User is signed in and the cart is empty"],
+      "testData": { "products": ["Samsung Note 8", "Nokia Edge"] },
+      "steps": [{ "action": "Add Samsung Note 8 and Nokia Edge" }, { "action": "Click the checkout counter" }],
+      "expectedResult": "Cart rows list Samsung Note 8 and Nokia Edge only.",
+      "automation": { "status": "Automated", "spec": "tests/protocommerce/shop.spec.ts" }
+    },
+    {
+      "id": "TC-PCOM-004",
+      "title": "Cart grand total equals the sum of line totals",
+      "requirementIds": ["REQ-PCOM-03"],
+      "priority": "P1",
+      "severity": "Critical",
+      "type": "Functional",
+      "technique": "Decision Table",
+      "tags": ["@regression", "@protocommerce"],
+      "preconditions": ["User is signed in and the cart is empty"],
+      "testData": { "products": ["iphone X", "Samsung Note 8", "Nokia Edge"] },
+      "steps": [
+        { "action": "Add three products and open the cart", "expected": "Three cart rows are displayed" },
+        { "action": "Sum the line totals" }
+      ],
+      "expectedResult": "The grand total equals the sum of all line totals.",
+      "automation": { "status": "Automated", "spec": "tests/protocommerce/shop.spec.ts" }
+    },
+    {
+      "id": "TC-PCOM-005",
+      "title": "Removing a product deletes its row from the cart",
+      "requirementIds": ["REQ-PCOM-03"],
+      "priority": "P2",
+      "severity": "Major",
+      "type": "Functional",
+      "technique": "State Transition",
+      "tags": ["@regression", "@protocommerce"],
+      "preconditions": ["User is signed in and the cart is empty"],
+      "testData": { "products": ["iphone X", "Blackberry"], "remove": "iphone X" },
+      "steps": [
+        { "action": "Add iphone X and Blackberry and open the cart" },
+        { "action": "Click Remove on iphone X" }
+      ],
+      "expectedResult": "Only Blackberry remains in the cart.",
+      "automation": { "status": "Automated", "spec": "tests/protocommerce/shop.spec.ts" }
+    },
+    {
+      "id": "TC-PCOM-006",
+      "title": "Customer completes an order end to end",
+      "requirementIds": ["REQ-PCOM-02", "REQ-PCOM-03", "REQ-PCOM-04"],
+      "priority": "P1",
+      "severity": "Critical",
+      "type": "End-to-End",
+      "technique": "Use Case",
+      "tags": ["@smoke", "@regression", "@e2e", "@protocommerce"],
+      "preconditions": ["User is signed in and the cart is empty"],
+      "testData": { "product": "iphone X", "countrySearch": "ind", "country": "India" },
+      "steps": [
+        { "action": "Add iphone X and open the cart", "expected": "Cart lists iphone X" },
+        {
+          "action": "Click Checkout and type 'ind' in the delivery location",
+          "expected": "Country suggestions appear"
+        },
+        { "action": "Select India", "expected": "Delivery location shows India" },
+        { "action": "Accept the terms and click Purchase" }
+      ],
+      "expectedResult": "Success alert 'Success! Thank you! Your order will be delivered in next few weeks :-).' is shown.",
+      "automation": { "status": "Automated", "spec": "tests/protocommerce/checkout.spec.ts" }
+    },
+    {
+      "id": "TC-PCOM-007",
+      "title": "Delivery country suggestions match the partial text entered",
+      "requirementIds": ["REQ-PCOM-04"],
+      "priority": "P2",
+      "severity": "Major",
+      "type": "Functional",
+      "technique": "Equivalence Partitioning",
+      "tags": ["@regression", "@protocommerce"],
+      "preconditions": ["User is on the checkout page with a product in the cart"],
+      "testData": { "countrySearch": "ind", "expected": ["India", "Indonesia"] },
+      "steps": [{ "action": "Type 'ind' in the delivery location field" }],
+      "expectedResult": "Suggestions list exactly India and Indonesia.",
+      "automation": { "status": "Automated", "spec": "tests/protocommerce/checkout.spec.ts" }
+    },
+    {
+      "id": "TC-PCOM-008",
+      "title": "Continue Shopping returns to the catalogue and keeps the cart",
+      "requirementIds": ["REQ-PCOM-02", "REQ-PCOM-03"],
+      "priority": "P2",
+      "severity": "Major",
+      "type": "Functional",
+      "technique": "State Transition",
+      "tags": ["@regression", "@known-defect", "@protocommerce"],
+      "preconditions": ["User is signed in and the cart is empty"],
+      "testData": { "product": "Nokia Edge" },
+      "steps": [
+        { "action": "Add Nokia Edge and open the cart" },
+        { "action": "Click Continue Shopping", "expected": "Product catalogue is displayed" }
+      ],
+      "expectedResult": "Checkout counter still shows ( 1 ).",
+      "defectId": "DEF-PCOM-001",
+      "notes": "Observed: the counter resets to ( 0 ). Automated as an expected failure until the defect is fixed.",
+      "automation": { "status": "Automated", "spec": "tests/protocommerce/shop.spec.ts" }
+    },
+    {
+      "id": "TC-PCOM-009",
+      "title": "Purchase is blocked when the delivery country is empty",
+      "requirementIds": ["REQ-PCOM-04"],
+      "priority": "P2",
+      "severity": "Major",
+      "type": "Negative",
+      "technique": "Decision Table",
+      "tags": ["@regression", "@protocommerce"],
+      "preconditions": ["User is on the checkout page with a product in the cart"],
+      "testData": { "country": "", "termsAccepted": true },
+      "steps": [{ "action": "Leave the delivery location empty" }, { "action": "Accept the terms and click Purchase" }],
+      "expectedResult": "Purchase is prevented and a validation message asks for a delivery country.",
+      "notes": "Acceptance criteria for checkout validation are not documented. Confirm the expected behaviour before automating.",
+      "automation": { "status": "Candidate" }
+    }
+  ]
+}

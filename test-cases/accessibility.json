@@ -1,0 +1,68 @@
+{
+  "$schema": "../.cursor/skills/ui-test-case-generator/test-case.schema.json",
+  "module": "A11Y",
+  "feature": "WCAG 2.1 A/AA accessibility regression",
+  "application": "https://rahulshettyacademy.com",
+  "requirements": [
+    {
+      "id": "REQ-A11Y-01",
+      "description": "Key pages introduce no WCAG 2.1 A/AA violations beyond the recorded accessibility baseline."
+    }
+  ],
+  "testCases": [
+    {
+      "id": "TC-A11Y-001",
+      "title": "Login Page Practise introduces no new WCAG A/AA violations",
+      "requirementIds": ["REQ-A11Y-01"],
+      "priority": "P2",
+      "severity": "Major",
+      "type": "Accessibility",
+      "technique": "Checklist",
+      "tags": ["@regression", "@a11y"],
+      "preconditions": ["Login page is open"],
+      "testData": { "baseline": ["color-contrast", "html-has-lang", "select-name"] },
+      "steps": [{ "action": "Run an axe-core scan with WCAG 2 A and AA rules" }],
+      "expectedResult": "Every violation found is listed in the baseline; the full report is attached to the test.",
+      "automation": { "status": "Automated", "spec": "tests/accessibility/a11y.spec.ts" }
+    },
+    {
+      "id": "TC-A11Y-002",
+      "title": "GreenKart home introduces no new WCAG A/AA violations",
+      "requirementIds": ["REQ-A11Y-01"],
+      "priority": "P2",
+      "severity": "Major",
+      "type": "Accessibility",
+      "technique": "Checklist",
+      "tags": ["@regression", "@a11y"],
+      "preconditions": ["GreenKart home page is open"],
+      "testData": { "baseline": ["button-name", "color-contrast", "html-has-lang", "label"] },
+      "steps": [{ "action": "Run an axe-core scan with WCAG 2 A and AA rules" }],
+      "expectedResult": "Every violation found is listed in the baseline; the full report is attached to the test.",
+      "automation": { "status": "Automated", "spec": "tests/accessibility/a11y.spec.ts" }
+    },
+    {
+      "id": "TC-A11Y-003",
+      "title": "Automation Practice introduces no new WCAG A/AA violations",
+      "requirementIds": ["REQ-A11Y-01"],
+      "priority": "P3",
+      "severity": "Minor",
+      "type": "Accessibility",
+      "technique": "Checklist",
+      "tags": ["@regression", "@a11y"],
+      "preconditions": ["Automation Practice page is open"],
+      "testData": {
+        "baseline": [
+          "color-contrast",
+          "frame-title",
+          "image-alt",
+          "link-name",
+          "scrollable-region-focusable",
+          "select-name"
+        ]
+      },
+      "steps": [{ "action": "Run an axe-core scan with WCAG 2 A and AA rules" }],
+      "expectedResult": "Every violation found is listed in the baseline; the full report is attached to the test.",
+      "automation": { "status": "Automated", "spec": "tests/accessibility/a11y.spec.ts" }
+    }
+  ]
+}

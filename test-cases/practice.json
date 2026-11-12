@@ -1,0 +1,196 @@
+{
+  "$schema": "../.cursor/skills/ui-test-case-generator/test-case.schema.json",
+  "module": "PRAC",
+  "feature": "Automation Practice page",
+  "application": "https://rahulshettyacademy.com/AutomationPractice/",
+  "requirements": [
+    {
+      "id": "REQ-PRAC-01",
+      "description": "Form controls (radio, autocomplete, dropdown, checkbox) accept and reflect user selections."
+    },
+    { "id": "REQ-PRAC-02", "description": "Alert and confirm dialogs greet the user by the name entered." },
+    {
+      "id": "REQ-PRAC-03",
+      "description": "Open Window launches the partner site without navigating away from the practice page."
+    },
+    {
+      "id": "REQ-PRAC-04",
+      "description": "Dynamic content (hide/show, hover menu, tables, iframe) behaves and calculates correctly."
+    }
+  ],
+  "testCases": [
+    {
+      "id": "TC-PRAC-001",
+      "title": "Radio buttons allow only one selection at a time",
+      "requirementIds": ["REQ-PRAC-01"],
+      "priority": "P2",
+      "severity": "Major",
+      "type": "Functional",
+      "technique": "State Transition",
+      "tags": ["@smoke", "@regression", "@practice"],
+      "preconditions": ["Automation Practice page is open"],
+      "steps": [{ "action": "Select Radio1" }, { "action": "Select Radio3" }],
+      "expectedResult": "Only Radio3 is selected; Radio1 and Radio2 are not selected.",
+      "automation": { "status": "Automated", "spec": "tests/practice/form-controls.spec.ts" }
+    },
+    {
+      "id": "TC-PRAC-002",
+      "title": "Country autocomplete selects a suggested country",
+      "requirementIds": ["REQ-PRAC-01"],
+      "priority": "P2",
+      "severity": "Major",
+      "type": "Functional",
+      "technique": "Equivalence Partitioning",
+      "tags": ["@regression", "@practice"],
+      "preconditions": ["Automation Practice page is open"],
+      "testData": { "search": "ind", "country": "India" },
+      "steps": [
+        { "action": "Type 'ind' in the country field", "expected": "Suggestions include India" },
+        { "action": "Choose India from the suggestions" }
+      ],
+      "expectedResult": "The country field contains India.",
+      "automation": { "status": "Automated", "spec": "tests/practice/form-controls.spec.ts" }
+    },
+    {
+      "id": "TC-PRAC-003",
+      "title": "Static dropdown selects the chosen option",
+      "requirementIds": ["REQ-PRAC-01"],
+      "priority": "P3",
+      "severity": "Minor",
+      "type": "Functional",
+      "technique": "Equivalence Partitioning",
+      "tags": ["@regression", "@practice"],
+      "preconditions": ["Automation Practice page is open"],
+      "steps": [
+        { "action": "Observe the default dropdown value", "expected": "'Select' placeholder is chosen" },
+        { "action": "Choose Option2" }
+      ],
+      "expectedResult": "Dropdown value is option2.",
+      "automation": { "status": "Automated", "spec": "tests/practice/form-controls.spec.ts" }
+    },
+    {
+      "id": "TC-PRAC-004",
+      "title": "Checkboxes can be checked and unchecked independently",
+      "requirementIds": ["REQ-PRAC-01"],
+      "priority": "P3",
+      "severity": "Minor",
+      "type": "Functional",
+      "technique": "Decision Table",
+      "tags": ["@regression", "@practice"],
+      "preconditions": ["Automation Practice page is open"],
+      "steps": [{ "action": "Check Option1 and Option3" }, { "action": "Uncheck Option1" }],
+      "expectedResult": "Only Option3 is checked.",
+      "automation": { "status": "Automated", "spec": "tests/practice/form-controls.spec.ts" }
+    },
+    {
+      "id": "TC-PRAC-005",
+      "title": "Alert greets the user by the entered name",
+      "requirementIds": ["REQ-PRAC-02"],
+      "priority": "P2",
+      "severity": "Major",
+      "type": "Functional",
+      "technique": "Use Case",
+      "tags": ["@smoke", "@regression", "@practice"],
+      "preconditions": ["Automation Practice page is open"],
+      "testData": { "name": "Diksha" },
+      "steps": [{ "action": "Enter the name 'Diksha'" }, { "action": "Click Alert" }],
+      "expectedResult": "Alert reads 'Hello Diksha, share this practice page and share your knowledge'.",
+      "automation": { "status": "Automated", "spec": "tests/practice/browser-interactions.spec.ts" }
+    },
+    {
+      "id": "TC-PRAC-006",
+      "title": "Confirm dialog asks the named user to confirm and can be dismissed",
+      "requirementIds": ["REQ-PRAC-02"],
+      "priority": "P3",
+      "severity": "Minor",
+      "type": "Functional",
+      "technique": "State Transition",
+      "tags": ["@regression", "@practice"],
+      "preconditions": ["Automation Practice page is open"],
+      "testData": { "name": "Diksha", "response": "dismiss" },
+      "steps": [{ "action": "Enter the name 'Diksha'" }, { "action": "Click Confirm and dismiss the dialog" }],
+      "expectedResult": "Confirm dialog reads 'Hello Diksha, Are you sure you want to confirm?'.",
+      "automation": { "status": "Automated", "spec": "tests/practice/browser-interactions.spec.ts" }
+    },
+    {
+      "id": "TC-PRAC-007",
+      "title": "Open Window launches the QAClick Academy site in a new window",
+      "requirementIds": ["REQ-PRAC-03"],
+      "priority": "P3",
+      "severity": "Minor",
+      "type": "Functional",
+      "technique": "Use Case",
+      "tags": ["@regression", "@practice"],
+      "preconditions": ["Automation Practice page is open"],
+      "steps": [{ "action": "Click Open Window" }],
+      "expectedResult": "A new window opens qaclickacademy.com while the original page stays on Automation Practice.",
+      "automation": { "status": "Automated", "spec": "tests/practice/browser-interactions.spec.ts" }
+    },
+    {
+      "id": "TC-PRAC-008",
+      "title": "Hide and Show buttons toggle the textbox visibility",
+      "requirementIds": ["REQ-PRAC-04"],
+      "priority": "P3",
+      "severity": "Minor",
+      "type": "UI",
+      "technique": "State Transition",
+      "tags": ["@regression", "@practice"],
+      "preconditions": ["Automation Practice page is open"],
+      "steps": [{ "action": "Click Hide", "expected": "Textbox is hidden" }, { "action": "Click Show" }],
+      "expectedResult": "Textbox is visible again.",
+      "automation": { "status": "Automated", "spec": "tests/practice/form-controls.spec.ts" }
+    },
+    {
+      "id": "TC-PRAC-009",
+      "title": "Fixed-header table amounts add up to the total collected",
+      "requirementIds": ["REQ-PRAC-04"],
+      "priority": "P2",
+      "severity": "Major",
+      "type": "Functional",
+      "technique": "Decision Table",
+      "tags": ["@smoke", "@regression", "@practice"],
+      "preconditions": ["Automation Practice page is open"],
+      "steps": [
+        { "action": "Read every value in the Amount column" },
+        { "action": "Read the 'Total Amount Collected' label" }
+      ],
+      "expectedResult": "The total collected equals the sum of the Amount column.",
+      "automation": { "status": "Automated", "spec": "tests/practice/browser-interactions.spec.ts" }
+    },
+    {
+      "id": "TC-PRAC-010",
+      "title": "Hovering the Mouse Hover button reveals the menu links",
+      "requirementIds": ["REQ-PRAC-04"],
+      "priority": "P3",
+      "severity": "Minor",
+      "type": "UI",
+      "technique": "State Transition",
+      "tags": ["@regression", "@practice"],
+      "preconditions": ["Automation Practice page is open"],
+      "steps": [
+        { "action": "Observe the hover menu", "expected": "Top link is hidden" },
+        { "action": "Hover over Mouse Hover" }
+      ],
+      "expectedResult": "Top link becomes visible.",
+      "automation": { "status": "Automated", "spec": "tests/practice/form-controls.spec.ts" }
+    },
+    {
+      "id": "TC-PRAC-011",
+      "title": "Embedded iFrame loads the courses site and its navigation works",
+      "requirementIds": ["REQ-PRAC-04"],
+      "priority": "P4",
+      "severity": "Minor",
+      "type": "Functional",
+      "technique": "Use Case",
+      "tags": ["@regression", "@practice"],
+      "preconditions": ["Automation Practice page is open"],
+      "steps": [
+        { "action": "Scroll to the iFrame example" },
+        { "action": "Click a navigation link inside the iFrame" }
+      ],
+      "expectedResult": "The iFrame navigates within itself and the parent page is unchanged.",
+      "notes": "The iFrame content is served by a third-party legacy domain. Kept manual to avoid flaky external dependencies.",
+      "automation": { "status": "Manual" }
+    }
+  ]
+}

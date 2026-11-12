@@ -1,0 +1,158 @@
+{
+  "$schema": "../.cursor/skills/ui-test-case-generator/test-case.schema.json",
+  "module": "GKART",
+  "feature": "GreenKart grocery store",
+  "application": "https://rahulshettyacademy.com/seleniumPractise/#/",
+  "requirements": [
+    {
+      "id": "REQ-GKART-01",
+      "description": "Customers search the catalogue and see only products whose name matches the keyword."
+    },
+    { "id": "REQ-GKART-02", "description": "Adding a product with a quantity updates the cart item count and price." },
+    { "id": "REQ-GKART-03", "description": "A valid promo code applies its discount and an invalid code is rejected." },
+    { "id": "REQ-GKART-04", "description": "Orders are placed only after a country is chosen and terms are accepted." }
+  ],
+  "testCases": [
+    {
+      "id": "TC-GKART-001",
+      "title": "Search shows only products matching the keyword",
+      "requirementIds": ["REQ-GKART-01"],
+      "priority": "P1",
+      "severity": "Critical",
+      "type": "Functional",
+      "technique": "Equivalence Partitioning",
+      "tags": ["@smoke", "@regression", "@greenkart"],
+      "preconditions": ["GreenKart home page is open with the full catalogue"],
+      "testData": {
+        "scenarios": [
+          { "keyword": "ca", "expected": ["Cauliflower - 1 Kg", "Carrot - 1 Kg", "Capsicum", "Cashews - 1 Kg"] },
+          { "keyword": "Tom", "expected": ["Tomato - 1 Kg"] },
+          { "keyword": "BER", "expected": ["Cucumber - 1 Kg", "Raspberry - 1/4 Kg", "Strawberry - 1/4 Kg"] }
+        ]
+      },
+      "steps": [{ "action": "Type the keyword into the search box" }],
+      "expectedResult": "Only the expected products are listed; matching is case-insensitive.",
+      "automation": { "status": "Automated", "spec": "tests/greenkart/search.spec.ts" }
+    },
+    {
+      "id": "TC-GKART-002",
+      "title": "Search without matches shows the empty-state message",
+      "requirementIds": ["REQ-GKART-01"],
+      "priority": "P2",
+      "severity": "Minor",
+      "type": "Negative",
+      "technique": "Equivalence Partitioning",
+      "tags": ["@regression", "@greenkart"],
+      "preconditions": ["GreenKart home page is open"],
+      "testData": { "keyword": "xyz" },
+      "steps": [{ "action": "Search for 'xyz'" }],
+      "expectedResult": "No products are listed and 'Sorry, no products matched your search!' is displayed.",
+      "automation": { "status": "Automated", "spec": "tests/greenkart/search.spec.ts" }
+    },
+    {
+      "id": "TC-GKART-003",
+      "title": "Adding a product with quantity updates the cart summary",
+      "requirementIds": ["REQ-GKART-02"],
+      "priority": "P1",
+      "severity": "Critical",
+      "type": "Functional",
+      "technique": "Decision Table",
+      "tags": ["@smoke", "@regression", "@greenkart"],
+      "preconditions": ["GreenKart home page is open with an empty cart"],
+      "testData": { "product": "Tomato - 1 Kg", "quantity": 3 },
+      "steps": [{ "action": "Set the Tomato quantity to 3" }, { "action": "Click ADD TO CART" }],
+      "expectedResult": "Cart header shows 1 item and a price of unit price × 3.",
+      "automation": { "status": "Automated", "spec": "tests/greenkart/checkout.spec.ts" }
+    },
+    {
+      "id": "TC-GKART-004",
+      "title": "Valid promo code applies a 10% discount",
+      "requirementIds": ["REQ-GKART-03"],
+      "priority": "P1",
+      "severity": "Critical",
+      "type": "Functional",
+      "technique": "Equivalence Partitioning",
+      "tags": ["@regression", "@greenkart"],
+      "preconditions": ["Cart contains Tomato × 3 and the cart page is open"],
+      "testData": { "promoCode": "rahulshettyacademy", "discount": "10%" },
+      "steps": [
+        { "action": "Enter promo code 'rahulshettyacademy'" },
+        { "action": "Click Apply", "expected": "'Code applied ..!' is shown" }
+      ],
+      "expectedResult": "Discount shows 10% and total after discount equals 90% of the total amount.",
+      "automation": { "status": "Automated", "spec": "tests/greenkart/checkout.spec.ts" }
+    },
+    {
+      "id": "TC-GKART-005",
+      "title": "Invalid promo code is rejected and no discount is applied",
+      "requirementIds": ["REQ-GKART-03"],
+      "priority": "P2",
+      "severity": "Major",
+      "type": "Negative",
+      "technique": "Equivalence Partitioning",
+      "tags": ["@regression", "@greenkart"],
+      "preconditions": ["Cart contains a product and the cart page is open"],
+      "testData": { "promoCode": "INVALID2026" },
+      "steps": [{ "action": "Enter an invalid promo code and click Apply" }],
+      "expectedResult": "'Invalid code ..!' is shown and the discount remains 0%.",
+      "automation": { "status": "Automated", "spec": "tests/greenkart/checkout.spec.ts" }
+    },
+    {
+      "id": "TC-GKART-006",
+      "title": "Proceeding without accepting terms shows a mandatory error",
+      "requirementIds": ["REQ-GKART-04"],
+      "priority": "P2",
+      "severity": "Major",
+      "type": "Negative",
+      "technique": "Decision Table",
+      "tags": ["@regression", "@greenkart"],
+      "preconditions": ["An order has been placed from the cart and the country page is open"],
+      "testData": { "country": "India", "termsAccepted": false },
+      "steps": [{ "action": "Select India" }, { "action": "Click Proceed without accepting the terms" }],
+      "expectedResult": "'Please accept Terms & Conditions - Required' is displayed.",
+      "automation": { "status": "Automated", "spec": "tests/greenkart/checkout.spec.ts" }
+    },
+    {
+      "id": "TC-GKART-007",
+      "title": "Customer places an order end to end",
+      "requirementIds": ["REQ-GKART-02", "REQ-GKART-04"],
+      "priority": "P1",
+      "severity": "Critical",
+      "type": "End-to-End",
+      "technique": "Use Case",
+      "tags": ["@smoke", "@regression", "@e2e", "@greenkart"],
+      "preconditions": ["GreenKart home page is open with an empty cart"],
+      "testData": {
+        "products": [
+          { "name": "Tomato - 1 Kg", "quantity": 2 },
+          { "name": "Cashews - 1 Kg", "quantity": 1 }
+        ],
+        "country": "India"
+      },
+      "steps": [
+        { "action": "Add Tomato × 2 and Cashews × 1", "expected": "Cart header shows 2 items" },
+        { "action": "Open the cart and click PROCEED TO CHECKOUT", "expected": "Cart table lists 2 rows" },
+        { "action": "Click Place Order" },
+        { "action": "Select India, accept the terms and click Proceed" }
+      ],
+      "expectedResult": "'Thank you, your order has been placed successfully' is displayed.",
+      "automation": { "status": "Automated", "spec": "tests/greenkart/checkout.spec.ts" }
+    },
+    {
+      "id": "TC-GKART-008",
+      "title": "Quantity field rejects zero and negative values",
+      "requirementIds": ["REQ-GKART-02"],
+      "priority": "P3",
+      "severity": "Minor",
+      "type": "Boundary",
+      "technique": "Boundary Value Analysis",
+      "tags": ["@regression", "@greenkart"],
+      "preconditions": ["GreenKart home page is open"],
+      "testData": { "quantities": [-1, 0, 1] },
+      "steps": [{ "action": "Enter each quantity value for a product" }, { "action": "Click ADD TO CART" }],
+      "expectedResult": "Values below 1 are rejected; 1 is accepted and added to the cart.",
+      "notes": "Minimum quantity rule is not documented. Agree the boundary with the product owner before automating.",
+      "automation": { "status": "Candidate" }
+    }
+  ]
+}

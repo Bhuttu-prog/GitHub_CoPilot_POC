@@ -1,0 +1,43 @@
+{
+  "name": "rahulshetty-academy-playwright-framework",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Playwright + TypeScript Page Object Model UI automation framework for rahulshettyacademy.com",
+  "scripts": {
+    "test": "playwright test",
+    "test:smoke": "playwright test --grep @smoke",
+    "test:regression": "playwright test --grep @regression",
+    "test:a11y": "playwright test --grep @a11y",
+    "test:chromium": "playwright test --project=chromium",
+    "test:cross-browser": "playwright test --project=chromium --project=firefox --project=webkit",
+    "test:headed": "playwright test --headed --project=chromium",
+    "test:ui": "playwright test --ui",
+    "test:debug": "playwright test --debug --project=chromium",
+    "report": "playwright show-report reports/html",
+    "codegen": "playwright codegen https://rahulshettyacademy.com",
+    "lint": "eslint .",
+    "lint:fix": "eslint . --fix",
+    "format": "prettier --write .",
+    "format:check": "prettier --check .",
+    "typecheck": "tsc --noEmit",
+    "tc:explore": "tsx .cursor/skills/ui-test-case-generator/scripts/explore-page.ts",
+    "tc:validate": "tsx .cursor/skills/ui-test-case-generator/scripts/validate-test-cases.ts",
+    "tc:coverage": "tsx .cursor/skills/ui-test-case-generator/scripts/traceability-report.ts",
+    "quality": "npm run typecheck && npm run lint && npm run format:check && npm run tc:validate && npm run tc:coverage"
+  },
+  "devDependencies": {
+    "@axe-core/playwright": "^4.14.0",
+    "@eslint/js": "^9.39.5",
+    "@playwright/test": "^1.65.0",
+    "@types/node": "^26.6.6",
+    "ajv": "^8.20.0",
+    "dotenv": "^18.0.9",
+    "eslint": "^9.39.5",
+    "eslint-config-prettier": "^10.1.8",
+    "eslint-plugin-playwright": "^2.12.2",
+    "prettier": "^3.9.10",
+    "tsx": "^4.23.15",
+    "typescript": "^6.0.3",
+    "typescript-eslint": "^8.72.1"
+  }
+}

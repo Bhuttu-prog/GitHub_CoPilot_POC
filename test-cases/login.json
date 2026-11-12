@@ -1,0 +1,221 @@
+{
+  "$schema": "../.cursor/skills/ui-test-case-generator/test-case.schema.json",
+  "module": "LOGIN",
+  "feature": "Login Page Practise",
+  "application": "https://rahulshettyacademy.com/loginpagePractise/",
+  "requirements": [
+    {
+      "id": "REQ-LOGIN-01",
+      "description": "A registered user signs in with valid credentials and is redirected to the shop."
+    },
+    {
+      "id": "REQ-LOGIN-02",
+      "description": "Invalid, retired or missing credentials are rejected with a clear error message."
+    },
+    { "id": "REQ-LOGIN-03", "description": "Choosing the User role requires confirming a limited-access warning." },
+    { "id": "REQ-LOGIN-04", "description": "Form controls offer the expected options and protect sensitive input." },
+    { "id": "REQ-LOGIN-05", "description": "Sign-in is allowed only after the terms and conditions are accepted." }
+  ],
+  "testCases": [
+    {
+      "id": "TC-LOGIN-001",
+      "title": "Admin signs in with valid credentials and lands on the shop",
+      "requirementIds": ["REQ-LOGIN-01"],
+      "priority": "P1",
+      "severity": "Critical",
+      "type": "Functional",
+      "technique": "Equivalence Partitioning",
+      "tags": ["@smoke", "@regression", "@login"],
+      "preconditions": ["Login page is open"],
+      "testData": {
+        "username": "${LOGIN_USERNAME}",
+        "password": "${LOGIN_PASSWORD}",
+        "userType": "admin",
+        "occupation": "Student"
+      },
+      "steps": [
+        { "action": "Enter the valid username and password" },
+        { "action": "Keep the Admin role and Student occupation selected" },
+        { "action": "Accept the terms and conditions" },
+        { "action": "Click Sign In", "expected": "The button shows a progress state" }
+      ],
+      "expectedResult": "User is redirected to /angularpractice/shop and the 'Shop Name' heading is visible.",
+      "automation": { "status": "Automated", "spec": "tests/login/login.spec.ts" }
+    },
+    {
+      "id": "TC-LOGIN-002",
+      "title": "User role signs in after confirming the limited-access modal",
+      "requirementIds": ["REQ-LOGIN-01", "REQ-LOGIN-03"],
+      "priority": "P2",
+      "severity": "Major",
+      "type": "Functional",
+      "technique": "State Transition",
+      "tags": ["@regression", "@login"],
+      "preconditions": ["Login page is open"],
+      "testData": {
+        "username": "${LOGIN_USERNAME}",
+        "password": "${LOGIN_PASSWORD}",
+        "userType": "user",
+        "occupation": "Consultant"
+      },
+      "steps": [
+        { "action": "Enter the valid username and password" },
+        { "action": "Select the User role", "expected": "Limited-access modal is displayed" },
+        { "action": "Click Okay on the modal", "expected": "Modal closes and User is selected" },
+        { "action": "Select Consultant, accept the terms and click Sign In" }
+      ],
+      "expectedResult": "User is redirected to /angularpractice/shop.",
+      "automation": { "status": "Automated", "spec": "tests/login/login.spec.ts" }
+    },
+    {
+      "id": "TC-LOGIN-003",
+      "title": "Valid username with an invalid password is rejected",
+      "requirementIds": ["REQ-LOGIN-02"],
+      "priority": "P1",
+      "severity": "Critical",
+      "type": "Negative",
+      "technique": "Equivalence Partitioning",
+      "tags": ["@smoke", "@regression", "@login"],
+      "preconditions": ["Login page is open"],
+      "testData": { "username": "${LOGIN_USERNAME}", "password": "WrongPassword@123" },
+      "steps": [
+        { "action": "Enter the valid username and an invalid password" },
+        { "action": "Accept the terms and click Sign In" }
+      ],
+      "expectedResult": "Error 'Incorrect username/password.' is shown and the user stays on the login page.",
+      "automation": { "status": "Automated", "spec": "tests/login/login.spec.ts" }
+    },
+    {
+      "id": "TC-LOGIN-004",
+      "title": "Unknown username with a valid password is rejected",
+      "requirementIds": ["REQ-LOGIN-02"],
+      "priority": "P2",
+      "severity": "Major",
+      "type": "Negative",
+      "technique": "Equivalence Partitioning",
+      "tags": ["@regression", "@login"],
+      "preconditions": ["Login page is open"],
+      "testData": { "username": "unknown.user", "password": "${LOGIN_PASSWORD}" },
+      "steps": [
+        { "action": "Enter an unregistered username and the valid password" },
+        { "action": "Accept the terms and click Sign In" }
+      ],
+      "expectedResult": "Error 'Incorrect username/password.' is shown and the user stays on the login page.",
+      "automation": { "status": "Automated", "spec": "tests/login/login.spec.ts" }
+    },
+    {
+      "id": "TC-LOGIN-005",
+      "title": "Empty username and password show a validation message",
+      "requirementIds": ["REQ-LOGIN-02"],
+      "priority": "P2",
+      "severity": "Major",
+      "type": "Boundary",
+      "technique": "Boundary Value Analysis",
+      "tags": ["@regression", "@login"],
+      "preconditions": ["Login page is open"],
+      "testData": { "username": "", "password": "" },
+      "steps": [{ "action": "Leave both fields empty and click Sign In" }],
+      "expectedResult": "Error 'Empty username/password.' is shown immediately.",
+      "automation": { "status": "Automated", "spec": "tests/login/login.spec.ts" }
+    },
+    {
+      "id": "TC-LOGIN-006",
+      "title": "Retired password shows guidance to use the new password",
+      "requirementIds": ["REQ-LOGIN-02"],
+      "priority": "P2",
+      "severity": "Minor",
+      "type": "Negative",
+      "technique": "Error Guessing",
+      "tags": ["@regression", "@login"],
+      "preconditions": ["Login page is open"],
+      "testData": { "username": "${LOGIN_USERNAME}", "password": "learning" },
+      "steps": [
+        { "action": "Enter the valid username with the retired password 'learning'" },
+        { "action": "Accept the terms and click Sign In" }
+      ],
+      "expectedResult": "Message explains the old password is no longer valid and shows the new password.",
+      "automation": { "status": "Automated", "spec": "tests/login/login.spec.ts" }
+    },
+    {
+      "id": "TC-LOGIN-007",
+      "title": "Cancelling the limited-access modal keeps the Admin role selected",
+      "requirementIds": ["REQ-LOGIN-03"],
+      "priority": "P3",
+      "severity": "Minor",
+      "type": "Functional",
+      "technique": "State Transition",
+      "tags": ["@regression", "@login"],
+      "preconditions": ["Login page is open with Admin selected by default"],
+      "steps": [
+        { "action": "Select the User role", "expected": "Limited-access modal is displayed" },
+        { "action": "Click Cancel" }
+      ],
+      "expectedResult": "Modal closes and the Admin role remains selected.",
+      "automation": { "status": "Automated", "spec": "tests/login/login.spec.ts" }
+    },
+    {
+      "id": "TC-LOGIN-008",
+      "title": "Occupation dropdown offers Student, Teacher and Consultant",
+      "requirementIds": ["REQ-LOGIN-04"],
+      "priority": "P3",
+      "severity": "Minor",
+      "type": "UI",
+      "technique": "Checklist",
+      "tags": ["@regression", "@login"],
+      "preconditions": ["Login page is open"],
+      "steps": [{ "action": "Inspect the occupation dropdown options" }],
+      "expectedResult": "Options are Student, Teacher and Consultant in that order, with Student selected by default.",
+      "automation": { "status": "Automated", "spec": "tests/login/login.spec.ts" }
+    },
+    {
+      "id": "TC-LOGIN-009",
+      "title": "Password field masks the entered characters",
+      "requirementIds": ["REQ-LOGIN-04"],
+      "priority": "P2",
+      "severity": "Major",
+      "type": "Security",
+      "technique": "Checklist",
+      "tags": ["@regression", "@login"],
+      "preconditions": ["Login page is open"],
+      "steps": [{ "action": "Type a password into the password field" }],
+      "expectedResult": "The password field is of type 'password' so characters are masked.",
+      "automation": { "status": "Automated", "spec": "tests/login/login.spec.ts" }
+    },
+    {
+      "id": "TC-LOGIN-010",
+      "title": "Sign In button shows a progress state while credentials are verified",
+      "requirementIds": ["REQ-LOGIN-04"],
+      "priority": "P3",
+      "severity": "Minor",
+      "type": "UI",
+      "technique": "State Transition",
+      "tags": ["@regression", "@login"],
+      "preconditions": ["Login page is open"],
+      "steps": [
+        { "action": "Enter any non-empty credentials" },
+        { "action": "Click Sign In", "expected": "Button label changes to 'Signing ..'" }
+      ],
+      "expectedResult": "Button returns to 'Sign In' once verification completes.",
+      "automation": { "status": "Automated", "spec": "tests/login/login.spec.ts" }
+    },
+    {
+      "id": "TC-LOGIN-011",
+      "title": "Sign-in is blocked until the terms and conditions are accepted",
+      "requirementIds": ["REQ-LOGIN-05"],
+      "priority": "P2",
+      "severity": "Major",
+      "type": "Negative",
+      "technique": "Decision Table",
+      "tags": ["@regression", "@login"],
+      "preconditions": ["Login page is open"],
+      "testData": { "username": "${LOGIN_USERNAME}", "password": "${LOGIN_PASSWORD}", "termsAccepted": false },
+      "steps": [
+        { "action": "Enter valid credentials" },
+        { "action": "Leave the terms checkbox unticked and click Sign In" }
+      ],
+      "expectedResult": "Sign-in is prevented and the user is asked to accept the terms.",
+      "notes": "Exploration showed sign-in succeeds without accepting terms. Confirm the requirement with the product owner before automating.",
+      "automation": { "status": "Candidate" }
+    }
+  ]
+}
