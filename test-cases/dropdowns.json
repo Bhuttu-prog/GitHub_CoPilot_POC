@@ -1,0 +1,213 @@
+{
+  "$schema": "../.cursor/skills/ui-test-case-generator/test-case.schema.json",
+  "module": "DROP",
+  "feature": "Dropdowns practice",
+  "application": "https://rahulshettyacademy.com/dropdownsPractise/",
+  "requirements": [
+    {
+      "id": "REQ-DROP-01",
+      "description": "The static currency dropdown offers Select, INR, AED and USD and keeps the chosen value."
+    },
+    {
+      "id": "REQ-DROP-02",
+      "description": "The country field suggests matching countries and accepts one selection."
+    },
+    {
+      "id": "REQ-DROP-03",
+      "description": "The passenger selector updates the summary and keeps the adult count between 1 and 9."
+    },
+    {
+      "id": "REQ-DROP-04",
+      "description": "The arrival city list excludes the departure city that was just selected."
+    },
+    {
+      "id": "REQ-DROP-05",
+      "description": "The return date is available for a round trip and inactive for a one-way trip."
+    },
+    {
+      "id": "REQ-DROP-06",
+      "description": "Only one special-fare discount can be selected at a time."
+    }
+  ],
+  "testCases": [
+    {
+      "id": "TC-DROP-001",
+      "title": "Static currency dropdown keeps USD selected",
+      "requirementIds": ["REQ-DROP-01"],
+      "priority": "P2",
+      "severity": "Major",
+      "type": "Functional",
+      "technique": "Equivalence Partitioning",
+      "tags": ["@smoke", "@regression", "@dropdowns"],
+      "preconditions": ["Dropdowns practice page is open"],
+      "testData": { "currency": "USD" },
+      "steps": [{ "action": "Choose USD from the currency dropdown" }],
+      "expectedResult": "The currency dropdown value is USD.",
+      "automation": { "status": "Automated", "spec": "tests/dropdowns/dropdowns.spec.ts" }
+    },
+    {
+      "id": "TC-DROP-002",
+      "title": "Currency dropdown lists Select, INR, AED and USD",
+      "requirementIds": ["REQ-DROP-01"],
+      "priority": "P3",
+      "severity": "Minor",
+      "type": "UI",
+      "technique": "Checklist",
+      "tags": ["@regression", "@dropdowns"],
+      "preconditions": ["Dropdowns practice page is open"],
+      "testData": { "options": ["Select", "INR", "AED", "USD"] },
+      "steps": [{ "action": "Read the currency dropdown options" }],
+      "expectedResult": "The options are Select, INR, AED and USD in that order.",
+      "automation": { "status": "Automated", "spec": "tests/dropdowns/dropdowns.spec.ts" }
+    },
+    {
+      "id": "TC-DROP-003",
+      "title": "Country autosuggest selects India from a partial name",
+      "requirementIds": ["REQ-DROP-02"],
+      "priority": "P1",
+      "severity": "Major",
+      "type": "Functional",
+      "technique": "Equivalence Partitioning",
+      "tags": ["@smoke", "@regression", "@dropdowns"],
+      "preconditions": ["Dropdowns practice page is open"],
+      "testData": {
+        "search": "ind",
+        "expected": ["British Indian Ocean Territory", "India", "Indonesia"],
+        "selection": "India"
+      },
+      "steps": [
+        { "action": "Type 'ind' in the country field", "expected": "Suggestions list the matching countries" },
+        { "action": "Choose India" }
+      ],
+      "expectedResult": "The country field contains India.",
+      "automation": { "status": "Automated", "spec": "tests/dropdowns/dropdowns.spec.ts" }
+    },
+    {
+      "id": "TC-DROP-004",
+      "title": "Unknown country text shows no suggestions",
+      "requirementIds": ["REQ-DROP-02"],
+      "priority": "P2",
+      "severity": "Minor",
+      "type": "Negative",
+      "technique": "Equivalence Partitioning",
+      "tags": ["@regression", "@dropdowns"],
+      "preconditions": ["Dropdowns practice page is open"],
+      "testData": { "search": "zzz" },
+      "steps": [{ "action": "Type 'zzz' in the country field" }],
+      "expectedResult": "No country suggestions are shown.",
+      "automation": { "status": "Automated", "spec": "tests/dropdowns/dropdowns.spec.ts" }
+    },
+    {
+      "id": "TC-DROP-005",
+      "title": "Adding adults and a child updates the passenger summary",
+      "requirementIds": ["REQ-DROP-03"],
+      "priority": "P1",
+      "severity": "Major",
+      "type": "Functional",
+      "technique": "State Transition",
+      "tags": ["@smoke", "@regression", "@dropdowns"],
+      "preconditions": ["Dropdowns practice page is open with the default passenger selection"],
+      "testData": { "addAdults": 1, "addChildren": 1, "summary": "2 Adult, 1 Child" },
+      "steps": [
+        { "action": "Read the passenger summary", "expected": "Summary shows 1 Adult" },
+        { "action": "Add one adult and one child and click Done" }
+      ],
+      "expectedResult": "The summary shows '2 Adult, 1 Child' and the selector closes.",
+      "automation": { "status": "Automated", "spec": "tests/dropdowns/dropdowns.spec.ts" }
+    },
+    {
+      "id": "TC-DROP-006",
+      "title": "Adult passenger count stops at nine",
+      "requirementIds": ["REQ-DROP-03"],
+      "priority": "P2",
+      "severity": "Minor",
+      "type": "Boundary",
+      "technique": "Boundary Value Analysis",
+      "tags": ["@regression", "@dropdowns"],
+      "preconditions": ["Dropdowns practice page is open"],
+      "testData": { "maximumAdults": 9 },
+      "steps": [{ "action": "Increase the adult count until the control no longer accepts another adult" }],
+      "expectedResult": "The adult count is 9 and the increase control is disabled.",
+      "automation": { "status": "Automated", "spec": "tests/dropdowns/dropdowns.spec.ts" }
+    },
+    {
+      "id": "TC-DROP-007",
+      "title": "Adult passenger count cannot go below one",
+      "requirementIds": ["REQ-DROP-03"],
+      "priority": "P2",
+      "severity": "Minor",
+      "type": "Boundary",
+      "technique": "Boundary Value Analysis",
+      "tags": ["@regression", "@dropdowns"],
+      "preconditions": ["Dropdowns practice page is open with the default passenger selection"],
+      "testData": { "minimumAdults": 1 },
+      "steps": [{ "action": "Open the passenger selector" }],
+      "expectedResult": "The adult count is 1 and the decrease control is disabled.",
+      "automation": { "status": "Automated", "spec": "tests/dropdowns/dropdowns.spec.ts" }
+    },
+    {
+      "id": "TC-DROP-008",
+      "title": "Arrival cities exclude the selected departure city",
+      "requirementIds": ["REQ-DROP-04"],
+      "priority": "P1",
+      "severity": "Major",
+      "type": "Functional",
+      "technique": "State Transition",
+      "tags": ["@smoke", "@regression", "@dropdowns"],
+      "preconditions": ["Dropdowns practice page is open"],
+      "testData": { "departure": "Bengaluru (BLR)", "arrival": "Chennai (MAA)" },
+      "steps": [
+        { "action": "Choose Bengaluru (BLR) as the departure city", "expected": "Bengaluru is absent from the arrival list" },
+        { "action": "Choose Chennai (MAA) as the arrival city" }
+      ],
+      "expectedResult": "Departure shows Bengaluru (BLR) and arrival shows Chennai (MAA).",
+      "automation": { "status": "Automated", "spec": "tests/dropdowns/dropdowns.spec.ts" }
+    },
+    {
+      "id": "TC-DROP-009",
+      "title": "Round trip makes the return date available",
+      "requirementIds": ["REQ-DROP-05"],
+      "priority": "P2",
+      "severity": "Major",
+      "type": "Functional",
+      "technique": "State Transition",
+      "tags": ["@regression", "@dropdowns"],
+      "preconditions": ["Dropdowns practice page is open on a one-way trip"],
+      "steps": [{ "action": "Select Round Trip" }],
+      "expectedResult": "Round Trip is selected and the return date is fully visible.",
+      "automation": { "status": "Automated", "spec": "tests/dropdowns/dropdowns.spec.ts" }
+    },
+    {
+      "id": "TC-DROP-010",
+      "title": "One way keeps the return date inactive",
+      "requirementIds": ["REQ-DROP-05"],
+      "priority": "P2",
+      "severity": "Major",
+      "type": "Functional",
+      "technique": "State Transition",
+      "tags": ["@regression", "@dropdowns"],
+      "preconditions": ["Dropdowns practice page is open"],
+      "steps": [{ "action": "Observe the default trip type and the return date" }],
+      "expectedResult": "One Way is selected and the return date is shown at reduced opacity.",
+      "automation": { "status": "Automated", "spec": "tests/dropdowns/dropdowns.spec.ts" }
+    },
+    {
+      "id": "TC-DROP-011",
+      "title": "Selecting a second discount clears the first",
+      "requirementIds": ["REQ-DROP-06"],
+      "priority": "P2",
+      "severity": "Major",
+      "type": "Functional",
+      "technique": "State Transition",
+      "tags": ["@regression", "@dropdowns"],
+      "preconditions": ["Dropdowns practice page is open"],
+      "testData": { "first": "Family and Friends", "second": "Senior Citizen" },
+      "steps": [
+        { "action": "Check Family and Friends" },
+        { "action": "Check Senior Citizen" }
+      ],
+      "expectedResult": "Senior Citizen stays checked and Family and Friends is cleared.",
+      "automation": { "status": "Automated", "spec": "tests/dropdowns/dropdowns.spec.ts" }
+    }
+  ]
+}

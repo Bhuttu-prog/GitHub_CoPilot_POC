@@ -8,6 +8,7 @@ import { GreenKartHomePage } from '@pages/greenkart/GreenKartHomePage';
 import { GreenKartCartPage } from '@pages/greenkart/GreenKartCartPage';
 import { GreenKartCountryPage } from '@pages/greenkart/GreenKartCountryPage';
 import { AutomationPracticePage } from '@pages/practice/AutomationPracticePage';
+import { DropdownsPage } from '@pages/dropdowns/DropdownsPage';
 import { users } from '@data/users';
 
 type AccessibilityScan = (options?: {
@@ -25,6 +26,7 @@ type PageFixtures = {
   greenKartCartPage: GreenKartCartPage;
   greenKartCountryPage: GreenKartCountryPage;
   practicePage: AutomationPracticePage;
+  dropdownsPage: DropdownsPage;
   scanAccessibility: AccessibilityScan;
 };
 
@@ -44,7 +46,7 @@ export const test = base.extend<PageFixtures>({
   authenticatedShopPage: async ({ page, loginPage, shopPage }, use) => {
     await loginPage.open();
     await loginPage.loginAs(users.valid);
-    await page.waitForURL('**/angularpractice/shop');
+    await page.waitForURL('**/angularpractice/shop', { waitUntil: 'domcontentloaded' });
     await use(shopPage);
   },
   greenKartHomePage: async ({ page }, use) => {
@@ -58,6 +60,9 @@ export const test = base.extend<PageFixtures>({
   },
   practicePage: async ({ page }, use) => {
     await use(new AutomationPracticePage(page));
+  },
+  dropdownsPage: async ({ page }, use) => {
+    await use(new DropdownsPage(page));
   },
   scanAccessibility: async ({ page }, use, testInfo) => {
     await use(async ({ include, disableRules = [] } = {}) => {
