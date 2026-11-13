@@ -1,14 +1,15 @@
-import { readdirSync, readFileSync } from 'node:fs';
-import path from 'node:path';
+import { readdirSync, readFileSync } from "node:fs";
+import path from "node:path";
+import { fileURLToPath } from "node:url";
 
-export type AutomationStatus = 'Automated' | 'Candidate' | 'Manual';
+export type AutomationStatus = "Automated" | "Candidate" | "Manual";
 
 export type TestCase = {
   id: string;
   title: string;
   requirementIds: string[];
-  priority: 'P1' | 'P2' | 'P3' | 'P4';
-  severity: 'Critical' | 'Major' | 'Minor' | 'Trivial';
+  priority: "P1" | "P2" | "P3" | "P4";
+  severity: "Critical" | "Major" | "Minor" | "Trivial";
   type: string;
   technique: string;
   tags: string[];
@@ -33,17 +34,27 @@ export type Catalog = {
 
 export type CatalogFile = { file: string; content: unknown };
 
-export const projectRoot = process.cwd();
-export const catalogDirectory = path.join(projectRoot, 'test-cases');
-export const schemaPath = path.join(projectRoot, '.cursor/skills/ui-test-case-generator/test-case.schema.json');
+const skillScriptsDirectory = path.dirname(fileURLToPath(import.meta.url));
+export const repoRoot = path.resolve(skillScriptsDirectory, "../../..");
+export const catalogDirectory = path.join(
+  repoRoot,
+  "test-case-generation/test-cases",
+);
+export const schemaPath = path.join(
+  repoRoot,
+  "agent/test-case-generator/test-case.schema.json",
+);
+export const testScriptsRoot = path.join(repoRoot, "test-scripts");
 
 export function readCatalogFiles(): CatalogFile[] {
   return readdirSync(catalogDirectory)
-    .filter((file) => file.endsWith('.json'))
+    .filter((file) => file.endsWith(".json"))
     .sort()
     .map((file) => ({
-      file: path.join('test-cases', file),
-      content: JSON.parse(readFileSync(path.join(catalogDirectory, file), 'utf8')),
+      file: path.join("test-case-generation/test-cases", file),
+      content: JSON.parse(
+        readFileSync(path.join(catalogDirectory, file), "utf8"),
+      ),
     }));
 }
 

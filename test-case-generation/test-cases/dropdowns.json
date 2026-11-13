@@ -1,5 +1,5 @@
 {
-  "$schema": "../.cursor/skills/ui-test-case-generator/test-case.schema.json",
+  "$schema": "../../agent/test-case-generator/test-case.schema.json",
   "module": "DROP",
   "feature": "Dropdowns practice",
   "application": "https://rahulshettyacademy.com/dropdownsPractise/",
@@ -43,7 +43,10 @@
       "testData": { "currency": "USD" },
       "steps": [{ "action": "Choose USD from the currency dropdown" }],
       "expectedResult": "The currency dropdown value is USD.",
-      "automation": { "status": "Automated", "spec": "tests/dropdowns/dropdowns.spec.ts" }
+      "automation": {
+        "status": "Automated",
+        "spec": "scripts/dropdowns/dropdowns.spec.ts"
+      }
     },
     {
       "id": "TC-DROP-002",
@@ -58,7 +61,10 @@
       "testData": { "options": ["Select", "INR", "AED", "USD"] },
       "steps": [{ "action": "Read the currency dropdown options" }],
       "expectedResult": "The options are Select, INR, AED and USD in that order.",
-      "automation": { "status": "Automated", "spec": "tests/dropdowns/dropdowns.spec.ts" }
+      "automation": {
+        "status": "Automated",
+        "spec": "scripts/dropdowns/dropdowns.spec.ts"
+      }
     },
     {
       "id": "TC-DROP-003",
@@ -76,11 +82,17 @@
         "selection": "India"
       },
       "steps": [
-        { "action": "Type 'ind' in the country field", "expected": "Suggestions list the matching countries" },
+        {
+          "action": "Type 'ind' in the country field",
+          "expected": "Suggestions list the matching countries"
+        },
         { "action": "Choose India" }
       ],
       "expectedResult": "The country field contains India.",
-      "automation": { "status": "Automated", "spec": "tests/dropdowns/dropdowns.spec.ts" }
+      "automation": {
+        "status": "Automated",
+        "spec": "scripts/dropdowns/dropdowns.spec.ts"
+      }
     },
     {
       "id": "TC-DROP-004",
@@ -95,7 +107,10 @@
       "testData": { "search": "zzz" },
       "steps": [{ "action": "Type 'zzz' in the country field" }],
       "expectedResult": "No country suggestions are shown.",
-      "automation": { "status": "Automated", "spec": "tests/dropdowns/dropdowns.spec.ts" }
+      "automation": {
+        "status": "Automated",
+        "spec": "scripts/dropdowns/dropdowns.spec.ts"
+      }
     },
     {
       "id": "TC-DROP-005",
@@ -106,14 +121,26 @@
       "type": "Functional",
       "technique": "State Transition",
       "tags": ["@smoke", "@regression", "@dropdowns"],
-      "preconditions": ["Dropdowns practice page is open with the default passenger selection"],
-      "testData": { "addAdults": 1, "addChildren": 1, "summary": "2 Adult, 1 Child" },
+      "preconditions": [
+        "Dropdowns practice page is open with the default passenger selection"
+      ],
+      "testData": {
+        "addAdults": 1,
+        "addChildren": 1,
+        "summary": "2 Adult, 1 Child"
+      },
       "steps": [
-        { "action": "Read the passenger summary", "expected": "Summary shows 1 Adult" },
+        {
+          "action": "Read the passenger summary",
+          "expected": "Summary shows 1 Adult"
+        },
         { "action": "Add one adult and one child and click Done" }
       ],
       "expectedResult": "The summary shows '2 Adult, 1 Child' and the selector closes.",
-      "automation": { "status": "Automated", "spec": "tests/dropdowns/dropdowns.spec.ts" }
+      "automation": {
+        "status": "Automated",
+        "spec": "scripts/dropdowns/dropdowns.spec.ts"
+      }
     },
     {
       "id": "TC-DROP-006",
@@ -126,9 +153,16 @@
       "tags": ["@regression", "@dropdowns"],
       "preconditions": ["Dropdowns practice page is open"],
       "testData": { "maximumAdults": 9 },
-      "steps": [{ "action": "Increase the adult count until the control no longer accepts another adult" }],
+      "steps": [
+        {
+          "action": "Increase the adult count until the control no longer accepts another adult"
+        }
+      ],
       "expectedResult": "The adult count is 9 and the increase control is disabled.",
-      "automation": { "status": "Automated", "spec": "tests/dropdowns/dropdowns.spec.ts" }
+      "automation": {
+        "status": "Automated",
+        "spec": "scripts/dropdowns/dropdowns.spec.ts"
+      }
     },
     {
       "id": "TC-DROP-007",
@@ -139,11 +173,16 @@
       "type": "Boundary",
       "technique": "Boundary Value Analysis",
       "tags": ["@regression", "@dropdowns"],
-      "preconditions": ["Dropdowns practice page is open with the default passenger selection"],
+      "preconditions": [
+        "Dropdowns practice page is open with the default passenger selection"
+      ],
       "testData": { "minimumAdults": 1 },
       "steps": [{ "action": "Open the passenger selector" }],
       "expectedResult": "The adult count is 1 and the decrease control is disabled.",
-      "automation": { "status": "Automated", "spec": "tests/dropdowns/dropdowns.spec.ts" }
+      "automation": {
+        "status": "Automated",
+        "spec": "scripts/dropdowns/dropdowns.spec.ts"
+      }
     },
     {
       "id": "TC-DROP-008",
@@ -155,13 +194,22 @@
       "technique": "State Transition",
       "tags": ["@smoke", "@regression", "@dropdowns"],
       "preconditions": ["Dropdowns practice page is open"],
-      "testData": { "departure": "Bengaluru (BLR)", "arrival": "Chennai (MAA)" },
+      "testData": {
+        "departure": "Bengaluru (BLR)",
+        "arrival": "Chennai (MAA)"
+      },
       "steps": [
-        { "action": "Choose Bengaluru (BLR) as the departure city", "expected": "Bengaluru is absent from the arrival list" },
+        {
+          "action": "Choose Bengaluru (BLR) as the departure city",
+          "expected": "Bengaluru is absent from the arrival list"
+        },
         { "action": "Choose Chennai (MAA) as the arrival city" }
       ],
       "expectedResult": "Departure shows Bengaluru (BLR) and arrival shows Chennai (MAA).",
-      "automation": { "status": "Automated", "spec": "tests/dropdowns/dropdowns.spec.ts" }
+      "automation": {
+        "status": "Automated",
+        "spec": "scripts/dropdowns/dropdowns.spec.ts"
+      }
     },
     {
       "id": "TC-DROP-009",
@@ -175,7 +223,10 @@
       "preconditions": ["Dropdowns practice page is open on a one-way trip"],
       "steps": [{ "action": "Select Round Trip" }],
       "expectedResult": "Round Trip is selected and the return date is fully visible.",
-      "automation": { "status": "Automated", "spec": "tests/dropdowns/dropdowns.spec.ts" }
+      "automation": {
+        "status": "Automated",
+        "spec": "scripts/dropdowns/dropdowns.spec.ts"
+      }
     },
     {
       "id": "TC-DROP-010",
@@ -187,9 +238,14 @@
       "technique": "State Transition",
       "tags": ["@regression", "@dropdowns"],
       "preconditions": ["Dropdowns practice page is open"],
-      "steps": [{ "action": "Observe the default trip type and the return date" }],
+      "steps": [
+        { "action": "Observe the default trip type and the return date" }
+      ],
       "expectedResult": "One Way is selected and the return date is shown at reduced opacity.",
-      "automation": { "status": "Automated", "spec": "tests/dropdowns/dropdowns.spec.ts" }
+      "automation": {
+        "status": "Automated",
+        "spec": "scripts/dropdowns/dropdowns.spec.ts"
+      }
     },
     {
       "id": "TC-DROP-011",
@@ -207,7 +263,10 @@
         { "action": "Check Senior Citizen" }
       ],
       "expectedResult": "Senior Citizen stays checked and Family and Friends is cleared.",
-      "automation": { "status": "Automated", "spec": "tests/dropdowns/dropdowns.spec.ts" }
+      "automation": {
+        "status": "Automated",
+        "spec": "scripts/dropdowns/dropdowns.spec.ts"
+      }
     }
   ]
 }

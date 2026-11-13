@@ -1,5 +1,5 @@
 {
-  "$schema": "../.cursor/skills/ui-test-case-generator/test-case.schema.json",
+  "$schema": "../../agent/test-case-generator/test-case.schema.json",
   "module": "LOGIN",
   "feature": "Login Page Practise",
   "application": "https://rahulshettyacademy.com/loginpagePractise/",
@@ -12,9 +12,18 @@
       "id": "REQ-LOGIN-02",
       "description": "Invalid, retired or missing credentials are rejected with a clear error message."
     },
-    { "id": "REQ-LOGIN-03", "description": "Choosing the User role requires confirming a limited-access warning." },
-    { "id": "REQ-LOGIN-04", "description": "Form controls offer the expected options and protect sensitive input." },
-    { "id": "REQ-LOGIN-05", "description": "Sign-in is allowed only after the terms and conditions are accepted." }
+    {
+      "id": "REQ-LOGIN-03",
+      "description": "Choosing the User role requires confirming a limited-access warning."
+    },
+    {
+      "id": "REQ-LOGIN-04",
+      "description": "Form controls offer the expected options and protect sensitive input."
+    },
+    {
+      "id": "REQ-LOGIN-05",
+      "description": "Sign-in is allowed only after the terms and conditions are accepted."
+    }
   ],
   "testCases": [
     {
@@ -37,10 +46,16 @@
         { "action": "Enter the valid username and password" },
         { "action": "Keep the Admin role and Student occupation selected" },
         { "action": "Accept the terms and conditions" },
-        { "action": "Click Sign In", "expected": "The button shows a progress state" }
+        {
+          "action": "Click Sign In",
+          "expected": "The button shows a progress state"
+        }
       ],
       "expectedResult": "User is redirected to /angularpractice/shop and the 'Shop Name' heading is visible.",
-      "automation": { "status": "Automated", "spec": "tests/login/login.spec.ts" }
+      "automation": {
+        "status": "Automated",
+        "spec": "scripts/login/login.spec.ts"
+      }
     },
     {
       "id": "TC-LOGIN-002",
@@ -60,12 +75,21 @@
       },
       "steps": [
         { "action": "Enter the valid username and password" },
-        { "action": "Select the User role", "expected": "Limited-access modal is displayed" },
-        { "action": "Click Okay on the modal", "expected": "Modal closes and User is selected" },
+        {
+          "action": "Select the User role",
+          "expected": "Limited-access modal is displayed"
+        },
+        {
+          "action": "Click Okay on the modal",
+          "expected": "Modal closes and User is selected"
+        },
         { "action": "Select Consultant, accept the terms and click Sign In" }
       ],
       "expectedResult": "User is redirected to /angularpractice/shop.",
-      "automation": { "status": "Automated", "spec": "tests/login/login.spec.ts" }
+      "automation": {
+        "status": "Automated",
+        "spec": "scripts/login/login.spec.ts"
+      }
     },
     {
       "id": "TC-LOGIN-003",
@@ -77,13 +101,19 @@
       "technique": "Equivalence Partitioning",
       "tags": ["@smoke", "@regression", "@login"],
       "preconditions": ["Login page is open"],
-      "testData": { "username": "${LOGIN_USERNAME}", "password": "WrongPassword@123" },
+      "testData": {
+        "username": "${LOGIN_USERNAME}",
+        "password": "WrongPassword@123"
+      },
       "steps": [
         { "action": "Enter the valid username and an invalid password" },
         { "action": "Accept the terms and click Sign In" }
       ],
       "expectedResult": "Error 'Incorrect username/password.' is shown and the user stays on the login page.",
-      "automation": { "status": "Automated", "spec": "tests/login/login.spec.ts" }
+      "automation": {
+        "status": "Automated",
+        "spec": "scripts/login/login.spec.ts"
+      }
     },
     {
       "id": "TC-LOGIN-004",
@@ -95,13 +125,19 @@
       "technique": "Equivalence Partitioning",
       "tags": ["@regression", "@login"],
       "preconditions": ["Login page is open"],
-      "testData": { "username": "unknown.user", "password": "${LOGIN_PASSWORD}" },
+      "testData": {
+        "username": "unknown.user",
+        "password": "${LOGIN_PASSWORD}"
+      },
       "steps": [
         { "action": "Enter an unregistered username and the valid password" },
         { "action": "Accept the terms and click Sign In" }
       ],
       "expectedResult": "Error 'Incorrect username/password.' is shown and the user stays on the login page.",
-      "automation": { "status": "Automated", "spec": "tests/login/login.spec.ts" }
+      "automation": {
+        "status": "Automated",
+        "spec": "scripts/login/login.spec.ts"
+      }
     },
     {
       "id": "TC-LOGIN-005",
@@ -116,7 +152,10 @@
       "testData": { "username": "", "password": "" },
       "steps": [{ "action": "Leave both fields empty and click Sign In" }],
       "expectedResult": "Error 'Empty username/password.' is shown immediately.",
-      "automation": { "status": "Automated", "spec": "tests/login/login.spec.ts" }
+      "automation": {
+        "status": "Automated",
+        "spec": "scripts/login/login.spec.ts"
+      }
     },
     {
       "id": "TC-LOGIN-006",
@@ -130,11 +169,16 @@
       "preconditions": ["Login page is open"],
       "testData": { "username": "${LOGIN_USERNAME}", "password": "learning" },
       "steps": [
-        { "action": "Enter the valid username with the retired password 'learning'" },
+        {
+          "action": "Enter the valid username with the retired password 'learning'"
+        },
         { "action": "Accept the terms and click Sign In" }
       ],
       "expectedResult": "Message explains the old password is no longer valid and shows the new password.",
-      "automation": { "status": "Automated", "spec": "tests/login/login.spec.ts" }
+      "automation": {
+        "status": "Automated",
+        "spec": "scripts/login/login.spec.ts"
+      }
     },
     {
       "id": "TC-LOGIN-007",
@@ -147,11 +191,17 @@
       "tags": ["@regression", "@login"],
       "preconditions": ["Login page is open with Admin selected by default"],
       "steps": [
-        { "action": "Select the User role", "expected": "Limited-access modal is displayed" },
+        {
+          "action": "Select the User role",
+          "expected": "Limited-access modal is displayed"
+        },
         { "action": "Click Cancel" }
       ],
       "expectedResult": "Modal closes and the Admin role remains selected.",
-      "automation": { "status": "Automated", "spec": "tests/login/login.spec.ts" }
+      "automation": {
+        "status": "Automated",
+        "spec": "scripts/login/login.spec.ts"
+      }
     },
     {
       "id": "TC-LOGIN-008",
@@ -165,7 +215,10 @@
       "preconditions": ["Login page is open"],
       "steps": [{ "action": "Inspect the occupation dropdown options" }],
       "expectedResult": "Options are Student, Teacher and Consultant in that order, with Student selected by default.",
-      "automation": { "status": "Automated", "spec": "tests/login/login.spec.ts" }
+      "automation": {
+        "status": "Automated",
+        "spec": "scripts/login/login.spec.ts"
+      }
     },
     {
       "id": "TC-LOGIN-009",
@@ -179,7 +232,10 @@
       "preconditions": ["Login page is open"],
       "steps": [{ "action": "Type a password into the password field" }],
       "expectedResult": "The password field is of type 'password' so characters are masked.",
-      "automation": { "status": "Automated", "spec": "tests/login/login.spec.ts" }
+      "automation": {
+        "status": "Automated",
+        "spec": "scripts/login/login.spec.ts"
+      }
     },
     {
       "id": "TC-LOGIN-010",
@@ -193,10 +249,16 @@
       "preconditions": ["Login page is open"],
       "steps": [
         { "action": "Enter any non-empty credentials" },
-        { "action": "Click Sign In", "expected": "Button label changes to 'Signing ..'" }
+        {
+          "action": "Click Sign In",
+          "expected": "Button label changes to 'Signing ..'"
+        }
       ],
       "expectedResult": "Button returns to 'Sign In' once verification completes.",
-      "automation": { "status": "Automated", "spec": "tests/login/login.spec.ts" }
+      "automation": {
+        "status": "Automated",
+        "spec": "scripts/login/login.spec.ts"
+      }
     },
     {
       "id": "TC-LOGIN-011",
@@ -208,7 +270,11 @@
       "technique": "Decision Table",
       "tags": ["@regression", "@login"],
       "preconditions": ["Login page is open"],
-      "testData": { "username": "${LOGIN_USERNAME}", "password": "${LOGIN_PASSWORD}", "termsAccepted": false },
+      "testData": {
+        "username": "${LOGIN_USERNAME}",
+        "password": "${LOGIN_PASSWORD}",
+        "termsAccepted": false
+      },
       "steps": [
         { "action": "Enter valid credentials" },
         { "action": "Leave the terms checkbox unticked and click Sign In" }

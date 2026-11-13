@@ -21,8 +21,16 @@
       "@components/*": ["./src/components/*"],
       "@fixtures/*": ["./src/fixtures/*"],
       "@data/*": ["./src/data/*"],
-      "@utils/*": ["./src/utils/*"]
+      "@utils/*": ["./src/utils/*"],
+      "@playwright/test": ["./node_modules/@playwright/test"],
+      "ajv": ["./node_modules/ajv"]
     }
   },
-  "include": ["src/**/*.ts", "tests/**/*.ts", "playwright.config.ts", ".cursor/skills/**/*.ts"]
+  "include": [
+    "src/**/*.ts",
+    "scripts/**/*.ts",
+    "playwright.config.ts",
+    "../agent/test-case-generator/scripts/**/*.ts",
+    "../agent/test-script-generator/scripts/**/*.ts"
+  ]
 }

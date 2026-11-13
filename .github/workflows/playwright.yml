@@ -23,12 +23,16 @@ jobs:
   quality-gates:
     name: Static quality gates
     runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: test-scripts
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
         with:
           node-version: 20
           cache: npm
+          cache-dependency-path: test-scripts/package-lock.json
       - run: npm ci
       - run: npm run typecheck
       - run: npm run lint
@@ -40,16 +44,20 @@ jobs:
     needs: quality-gates
     runs-on: ubuntu-latest
     timeout-minutes: 30
+    defaults:
+      run:
+        working-directory: test-scripts
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
         with:
           node-version: 20
           cache: npm
+          cache-dependency-path: test-scripts/package-lock.json
       - run: npm ci
       - run: npx playwright install --with-deps
-      - name: Run tests
-        run: npx playwright test --grep "${{ github.event_name == 'pull_request' && '@smoke' || inputs.grep || '@regression' }}"
+      - name: Run test scripts
+        run: npm run test:scripts -- --grep "${{ github.event_name == 'pull_request' && '@smoke' || inputs.grep || '@regression' }}"
       - name: Build traceability matrix
         if: always()
         run: npm run tc:coverage
@@ -57,5 +65,5 @@ jobs:
         if: always()
         with:
           name: test-reports
-          path: reports/
+          path: test-scripts/reports/
           retention-days: 14

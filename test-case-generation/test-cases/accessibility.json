@@ -1,5 +1,5 @@
 {
-  "$schema": "../.cursor/skills/ui-test-case-generator/test-case.schema.json",
+  "$schema": "../../agent/test-case-generator/test-case.schema.json",
   "module": "A11Y",
   "feature": "WCAG 2.1 A/AA accessibility regression",
   "application": "https://rahulshettyacademy.com",
@@ -20,10 +20,17 @@
       "technique": "Checklist",
       "tags": ["@regression", "@a11y"],
       "preconditions": ["Login page is open"],
-      "testData": { "baseline": ["color-contrast", "html-has-lang", "select-name"] },
-      "steps": [{ "action": "Run an axe-core scan with WCAG 2 A and AA rules" }],
+      "testData": {
+        "baseline": ["color-contrast", "html-has-lang", "select-name"]
+      },
+      "steps": [
+        { "action": "Run an axe-core scan with WCAG 2 A and AA rules" }
+      ],
       "expectedResult": "Every violation found is listed in the baseline; the full report is attached to the test.",
-      "automation": { "status": "Automated", "spec": "tests/accessibility/a11y.spec.ts" }
+      "automation": {
+        "status": "Automated",
+        "spec": "scripts/accessibility/a11y.spec.ts"
+      }
     },
     {
       "id": "TC-A11Y-002",
@@ -35,10 +42,17 @@
       "technique": "Checklist",
       "tags": ["@regression", "@a11y"],
       "preconditions": ["GreenKart home page is open"],
-      "testData": { "baseline": ["button-name", "color-contrast", "html-has-lang", "label"] },
-      "steps": [{ "action": "Run an axe-core scan with WCAG 2 A and AA rules" }],
+      "testData": {
+        "baseline": ["button-name", "color-contrast", "html-has-lang", "label"]
+      },
+      "steps": [
+        { "action": "Run an axe-core scan with WCAG 2 A and AA rules" }
+      ],
       "expectedResult": "Every violation found is listed in the baseline; the full report is attached to the test.",
-      "automation": { "status": "Automated", "spec": "tests/accessibility/a11y.spec.ts" }
+      "automation": {
+        "status": "Automated",
+        "spec": "scripts/accessibility/a11y.spec.ts"
+      }
     },
     {
       "id": "TC-A11Y-003",
@@ -60,9 +74,14 @@
           "select-name"
         ]
       },
-      "steps": [{ "action": "Run an axe-core scan with WCAG 2 A and AA rules" }],
+      "steps": [
+        { "action": "Run an axe-core scan with WCAG 2 A and AA rules" }
+      ],
       "expectedResult": "Every violation found is listed in the baseline; the full report is attached to the test.",
-      "automation": { "status": "Automated", "spec": "tests/accessibility/a11y.spec.ts" }
+      "automation": {
+        "status": "Automated",
+        "spec": "scripts/accessibility/a11y.spec.ts"
+      }
     }
   ]
 }

@@ -1,13 +1,24 @@
-import { existsSync, mkdirSync, readFileSync, writeFileSync } from 'node:fs';
-import path from 'node:path';
-import { type Catalog, type TestCase, loadCatalogs, projectRoot } from './catalog';
+import { existsSync, mkdirSync, readFileSync, writeFileSync } from "node:fs";
+import path from "node:path";
+import {
+  type Catalog,
+  type TestCase,
+  loadCatalogs,
+  testScriptsRoot,
+} from "../../test-case-generator/scripts/catalog";
 
-type Outcome = 'Passed' | 'Failed' | 'Flaky' | 'Skipped' | 'Not run';
-type PlaywrightTest = { projectName: string; status: 'expected' | 'unexpected' | 'flaky' | 'skipped' };
+type Outcome = "Passed" | "Failed" | "Flaky" | "Skipped" | "Not run";
+type PlaywrightTest = {
+  projectName: string;
+  status: "expected" | "unexpected" | "flaky" | "skipped";
+};
 type PlaywrightSpec = { title: string; tests: PlaywrightTest[] };
 type PlaywrightSuite = { specs?: PlaywrightSpec[]; suites?: PlaywrightSuite[] };
 
-type TraceabilityRow = TestCase & { module: string; results: Record<string, Outcome> };
+type TraceabilityRow = TestCase & {
+  module: string;
+  results: Record<string, Outcome>;
+};
 type Summary = {
   generatedAt: string;
   requirements: number;
@@ -22,44 +33,63 @@ type Summary = {
   projects: string[];
 };
 
-const reportsDirectory = path.join(projectRoot, 'reports');
-const resultsPath = path.join(reportsDirectory, 'results.json');
+const reportsDirectory = path.join(testScriptsRoot, "reports");
+const resultsPath = path.join(reportsDirectory, "results.json");
 const testCaseIdPattern = /TC-[A-Z0-9]{2,8}-\d{3}/;
-const outcomeByStatus: Record<PlaywrightTest['status'], Outcome> = {
-  expected: 'Passed',
-  unexpected: 'Failed',
-  flaky: 'Flaky',
-  skipped: 'Skipped',
+const outcomeByStatus: Record<PlaywrightTest["status"], Outcome> = {
+  expected: "Passed",
+  unexpected: "Failed",
+  flaky: "Flaky",
+  skipped: "Skipped",
 };
-const outcomeSeverity: Outcome[] = ['Failed', 'Flaky', 'Passed', 'Skipped', 'Not run'];
+const outcomeSeverity: Outcome[] = [
+  "Failed",
+  "Flaky",
+  "Passed",
+  "Skipped",
+  "Not run",
+];
 
 function collectSpecs(suites: PlaywrightSuite[] = []): PlaywrightSpec[] {
-  return suites.flatMap((suite) => [...(suite.specs ?? []), ...collectSpecs(suite.suites)]);
+  return suites.flatMap((suite) => [
+    ...(suite.specs ?? []),
+    ...collectSpecs(suite.suites),
+  ]);
 }
 
 function worstOutcome(current: Outcome | undefined, next: Outcome): Outcome {
   if (!current) return next;
-  return outcomeSeverity.indexOf(next) < outcomeSeverity.indexOf(current) ? next : current;
+  return outcomeSeverity.indexOf(next) < outcomeSeverity.indexOf(current)
+    ? next
+    : current;
 }
 
 function readExecutionResults(): Map<string, Record<string, Outcome>> {
   const resultsByTestCase = new Map<string, Record<string, Outcome>>();
   if (!existsSync(resultsPath)) return resultsByTestCase;
 
-  const report = JSON.parse(readFileSync(resultsPath, 'utf8')) as { suites: PlaywrightSuite[] };
+  const report = JSON.parse(readFileSync(resultsPath, "utf8")) as {
+    suites: PlaywrightSuite[];
+  };
   for (const spec of collectSpecs(report.suites)) {
     const testCaseId = spec.title.match(testCaseIdPattern)?.[0];
     if (!testCaseId) continue;
     const results = resultsByTestCase.get(testCaseId) ?? {};
     for (const { projectName, status } of spec.tests) {
-      results[projectName] = worstOutcome(results[projectName], outcomeByStatus[status]);
+      results[projectName] = worstOutcome(
+        results[projectName],
+        outcomeByStatus[status],
+      );
     }
     resultsByTestCase.set(testCaseId, results);
   }
   return resultsByTestCase;
 }
 
-function buildRows(catalogs: Catalog[], resultsByTestCase: Map<string, Record<string, Outcome>>): TraceabilityRow[] {
+function buildRows(
+  catalogs: Catalog[],
+  resultsByTestCase: Map<string, Record<string, Outcome>>,
+): TraceabilityRow[] {
   return catalogs.flatMap((catalog) =>
     catalog.testCases.map((testCase) => ({
       ...testCase,
@@ -70,70 +100,97 @@ function buildRows(catalogs: Catalog[], resultsByTestCase: Map<string, Record<st
 }
 
 function percentage(part: number, whole: number): string {
-  return whole === 0 ? '0%' : `${Math.round((part / whole) * 100)}%`;
+  return whole === 0 ? "0%" : `${Math.round((part / whole) * 100)}%`;
 }
 
-function requirementStatus(outcomes: Outcome[], linked: TraceabilityRow[]): string {
-  if (outcomes.includes('Failed')) return 'Failed';
-  if (outcomes.length === 0) return 'Not run';
-  if (linked.some((row) => row.defectId)) return 'Known defect';
-  return 'Passed';
+function requirementStatus(
+  outcomes: Outcome[],
+  linked: TraceabilityRow[],
+): string {
+  if (outcomes.includes("Failed")) return "Failed";
+  if (outcomes.length === 0) return "Not run";
+  if (linked.some((row) => row.defectId)) return "Known defect";
+  return "Passed";
 }
 
 function escapeHtml(value: string): string {
-  return value.replace(/[&<>"']/g, (character) => `&#${character.charCodeAt(0)};`);
+  return value.replace(
+    /[&<>"']/g,
+    (character) => `&#${character.charCodeAt(0)};`,
+  );
 }
 
-function summarize(catalogs: Catalog[], rows: TraceabilityRow[], projects: string[]): Summary {
+function summarize(
+  catalogs: Catalog[],
+  rows: TraceabilityRow[],
+  projects: string[],
+): Summary {
   const executions = rows.flatMap((row) => Object.values(row.results));
-  const automated = rows.filter((row) => row.automation.status === 'Automated');
+  const automated = rows.filter((row) => row.automation.status === "Automated");
   return {
     generatedAt: new Date().toISOString(),
-    requirements: catalogs.reduce((count, catalog) => count + catalog.requirements.length, 0),
+    requirements: catalogs.reduce(
+      (count, catalog) => count + catalog.requirements.length,
+      0,
+    ),
     testCases: rows.length,
     automated: automated.length,
     automationCoverage: percentage(automated.length, rows.length),
     executions: executions.length,
-    passed: executions.filter((outcome) => outcome === 'Passed').length,
-    failed: executions.filter((outcome) => outcome === 'Failed').length,
-    passRate: percentage(executions.filter((outcome) => outcome === 'Passed').length, executions.length),
+    passed: executions.filter((outcome) => outcome === "Passed").length,
+    failed: executions.filter((outcome) => outcome === "Failed").length,
+    passRate: percentage(
+      executions.filter((outcome) => outcome === "Passed").length,
+      executions.length,
+    ),
     knownDefects: rows.filter((row) => row.defectId).length,
     projects,
   };
 }
 
-function renderHtml(catalogs: Catalog[], rows: TraceabilityRow[], summary: Summary): string {
+function renderHtml(
+  catalogs: Catalog[],
+  rows: TraceabilityRow[],
+  summary: Summary,
+): string {
   const kpis = [
-    ['Requirements', summary.requirements],
-    ['Test cases', summary.testCases],
-    ['Automation coverage', summary.automationCoverage],
-    ['Executions', summary.executions],
-    ['Pass rate', summary.passRate],
-    ['Known defects', summary.knownDefects],
+    ["Requirements", summary.requirements],
+    ["Test cases", summary.testCases],
+    ["Automation coverage", summary.automationCoverage],
+    ["Executions", summary.executions],
+    ["Pass rate", summary.passRate],
+    ["Known defects", summary.knownDefects],
   ];
   const requirementRows = catalogs.flatMap((catalog) =>
     catalog.requirements.map((requirement) => {
-      const linked = rows.filter((row) => row.requirementIds.includes(requirement.id));
+      const linked = rows.filter((row) =>
+        row.requirementIds.includes(requirement.id),
+      );
       const outcomes = linked.flatMap((row) => Object.values(row.results));
       const status = requirementStatus(outcomes, linked);
-      const badgeClass = status === 'Known defect' ? 'defect' : status.replace(' ', '-');
+      const badgeClass =
+        status === "Known defect" ? "defect" : status.replace(" ", "-");
       return `<tr><td>${requirement.id}</td><td>${escapeHtml(requirement.description)}</td><td>${linked
         .map((row) => row.id)
-        .join(', ')}</td><td><span class="badge ${badgeClass}">${status}</span></td></tr>`;
+        .join(
+          ", ",
+        )}</td><td><span class="badge ${badgeClass}">${status}</span></td></tr>`;
     }),
   );
   const testCaseRows = rows.map((row) => {
     const results = summary.projects
       .map((project) => {
-        const outcome = row.results[project] ?? 'Not run';
-        return `<td><span class="badge ${outcome.replace(' ', '-')}">${outcome}</span></td>`;
+        const outcome = row.results[project] ?? "Not run";
+        return `<td><span class="badge ${outcome.replace(" ", "-")}">${outcome}</span></td>`;
       })
-      .join('');
-    const defect = row.defectId ? `<span class="badge defect">${row.defectId}</span>` : '';
+      .join("");
+    const defect = row.defectId
+      ? `<span class="badge defect">${row.defectId}</span>`
+      : "";
     return `<tr data-module="${row.module}"><td>${row.id}</td><td>${escapeHtml(row.title)} ${defect}</td><td>${row.requirementIds.join(
-      ', ',
+      ", ",
     )}</td><td class="${row.priority}">${row.priority}</td><td>${row.type}</td><td>${row.technique}</td><td>${row.tags.join(
-      ' ',
+      " ",
     )}</td><td>${row.automation.status}</td>${results}</tr>`;
   });
 
@@ -170,14 +227,14 @@ function renderHtml(catalogs: Catalog[], rows: TraceabilityRow[], summary: Summa
   <div>Requirement → Test case → Automated spec → Cross-browser result · generated ${summary.generatedAt}</div>
 </header>
 <main>
-  <section class="kpis">${kpis.map(([label, value]) => `<div class="kpi"><strong>${value}</strong><span>${label}</span></div>`).join('')}</section>
+  <section class="kpis">${kpis.map(([label, value]) => `<div class="kpi"><strong>${value}</strong><span>${label}</span></div>`).join("")}</section>
   <h2>Requirement coverage</h2>
-  <table><thead><tr><th>Requirement</th><th>Description</th><th>Test cases</th><th>Status</th></tr></thead><tbody>${requirementRows.join('')}</tbody></table>
+  <table><thead><tr><th>Requirement</th><th>Description</th><th>Test cases</th><th>Status</th></tr></thead><tbody>${requirementRows.join("")}</tbody></table>
   <h2>Test cases</h2>
   <input id="filter" placeholder="Filter by ID, title, tag or status…" oninput="filterRows(this.value)">
   <table id="test-cases"><thead><tr><th>ID</th><th>Title</th><th>Requirements</th><th>Priority</th><th>Type</th><th>Technique</th><th>Tags</th><th>Automation</th>${summary.projects
     .map((project) => `<th>${project}</th>`)
-    .join('')}</tr></thead><tbody>${testCaseRows.join('')}</tbody></table>
+    .join("")}</tr></thead><tbody>${testCaseRows.join("")}</tbody></table>
 </main>
 <script>
   function filterRows(term) {
@@ -195,15 +252,24 @@ function main(): void {
   const catalogs = loadCatalogs();
   const resultsByTestCase = readExecutionResults();
   const rows = buildRows(catalogs, resultsByTestCase);
-  const projects = [...new Set([...resultsByTestCase.values()].flatMap((results) => Object.keys(results)))].sort();
+  const projects = [
+    ...new Set(
+      [...resultsByTestCase.values()].flatMap((results) =>
+        Object.keys(results),
+      ),
+    ),
+  ].sort();
   const summary = summarize(catalogs, rows, projects);
 
   mkdirSync(reportsDirectory, { recursive: true });
   writeFileSync(
-    path.join(reportsDirectory, 'traceability.json'),
+    path.join(reportsDirectory, "traceability.json"),
     JSON.stringify({ summary, testCases: rows }, null, 2),
   );
-  writeFileSync(path.join(reportsDirectory, 'traceability.html'), renderHtml(catalogs, rows, summary));
+  writeFileSync(
+    path.join(reportsDirectory, "traceability.html"),
+    renderHtml(catalogs, rows, summary),
+  );
 
   console.table(
     catalogs.map((catalog) => {
@@ -212,8 +278,12 @@ function main(): void {
         module: catalog.module,
         requirements: catalog.requirements.length,
         testCases: moduleRows.length,
-        automated: moduleRows.filter((row) => row.automation.status === 'Automated').length,
-        failed: moduleRows.filter((row) => Object.values(row.results).includes('Failed')).length,
+        automated: moduleRows.filter(
+          (row) => row.automation.status === "Automated",
+        ).length,
+        failed: moduleRows.filter((row) =>
+          Object.values(row.results).includes("Failed"),
+        ).length,
       };
     }),
   );
@@ -221,8 +291,12 @@ function main(): void {
     `Automation coverage ${summary.automationCoverage} · pass rate ${summary.passRate} across ${summary.executions} executions`,
   );
   if (!existsSync(resultsPath))
-    console.log('No reports/results.json found. Run "npm test" to include execution results.');
-  console.log('Traceability matrix written to reports/traceability.html');
+    console.log(
+      'No test-scripts/reports/results.json found. Run "npm run test:scripts" to include execution results.',
+    );
+  console.log(
+    "Traceability matrix written to test-scripts/reports/traceability.html",
+  );
 }
 
 main();

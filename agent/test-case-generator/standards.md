@@ -53,55 +53,14 @@ ISTQB Foundation Level black-box techniques:
 | Error Guessing | Known risk areas (retired passwords, double submit, whitespace) | Targeted negative cases |
 | Checklist | Static UI, content, accessibility, security attributes | One case per checklist item |
 
-## Automation standards
+## Catalog location
 
-### Project layout
-
-```
-src/config/      environment configuration (env.ts)
-src/pages/       page objects grouped by application area
-src/components/  reusable fragments shared by several pages (headers, modals)
-src/fixtures/    test.ts extends Playwright test with page-object fixtures
-src/data/        typed test data, with no secrets
-src/utils/       pure helpers (parsing, maths)
-tests/<area>/    *.spec.ts files, one feature per file
-test-cases/      test case catalogs (source of truth for traceability)
-```
-
-### Page objects
-
-- One class per page or in-app view. Extend `RoutablePage` when the page has its own URL (define `path`), and `BasePage` otherwise.
-- Declare locators as `readonly` fields assigned in the constructor. Expose parameterised locators as methods, for example `productCard(name)`.
-- Methods describe user intent (`loginAs`, `addToCart`, `applyPromoCode`) and return data or `void`.
-- Keep assertions out of page objects. Specs assert, and pages act and expose state.
-- Do not use hard waits. Rely on Playwright auto-waiting, and use `locator.waitFor` only to synchronise on an app event.
-
-### Locator priority
-
-1. `getByRole(role, { name })`
-2. `getByLabel(text)`
-3. `getByPlaceholder(text)`
-4. `getByText(text)` for non-interactive content
-5. `getByTestId(id)` (attribute `data-testid`)
-6. Stable `#id` or attribute CSS. Use this only when the accessible name is missing or changes at runtime.
-7. Never use XPath, `nth-child` on layout containers, or generated class names.
-
-### Specs
-
-- Import `test` and `expect` from `@fixtures/test`, never from `@playwright/test`.
-- Title: `TC-<MODULE>-NNN <catalog title>`. Data-driven cases may append the data variant.
-- Tags in the details object match the catalog: `{ tag: ['@smoke', '@regression'] }`.
-- Use an Arrange-Act-Assert layout separated by blank lines. Wrap multi-stage journeys in `test.step`.
-- Use web-first assertions (`await expect(locator).toHaveText(...)`). Never assert on a value that was read once and could go stale.
-- Tests must be independent: no shared state, and each test runs in any order and in parallel.
-- Known product defects: `test.fail()`, plus `annotation: { type: 'defect', description: 'DEF-... summary' }`, plus the `@known-defect` tag.
-- Never use `test.only`, `waitForTimeout`, `force: true`, or commented-out code.
+Write each module to `test-case-generation/test-cases/<module>.json`. Set `$schema` to `../../agent/test-case-generator/test-case.schema.json`. Leave Playwright specs to test-script-generator. When a case is not yet automated, set `automation.status` to `Candidate` or `Manual` and do not set `automation.spec`.
 
 ## Review checklist
 
-- [ ] `npm run tc:validate` passes
+- [ ] `npm run tc:validate` passes from `test-scripts`
 - [ ] Every requirement has at least one positive and one negative or boundary case
 - [ ] Every `Candidate` or `Manual` case explains why in `notes`
-- [ ] New locators follow the locator priority and are observed, not guessed
-- [ ] Specs pass on chromium, firefox and webkit
-- [ ] `npm run quality` passes
+- [ ] Titles state the observable outcome and do not start with Verify, Check, Test, Validate or Ensure
+- [ ] Secrets in `testData` use `${ENV_VAR}` placeholders

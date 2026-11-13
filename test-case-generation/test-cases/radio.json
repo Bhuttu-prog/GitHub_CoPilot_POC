@@ -1,5 +1,5 @@
 {
-  "$schema": "../.cursor/skills/ui-test-case-generator/test-case.schema.json",
+  "$schema": "../../agent/test-case-generator/test-case.schema.json",
   "module": "RADIO",
   "feature": "Radio Button Example",
   "application": "https://rahulshettyacademy.com/AutomationPractice/",
@@ -34,7 +34,10 @@
         { "action": "Inspect the checked state of Radio1, Radio2 and Radio3" }
       ],
       "expectedResult": "The group shows Radio1, Radio2 and Radio3, and none of them is selected.",
-      "automation": { "status": "Automated", "spec": "tests/radio/radios.spec.ts" }
+      "automation": {
+        "status": "Automated",
+        "spec": "scripts/radio/radios.spec.ts"
+      }
     },
     {
       "id": "TC-RADIO-002",
@@ -45,7 +48,9 @@
       "type": "Functional",
       "technique": "State Transition",
       "tags": ["@smoke", "@regression", "@radio"],
-      "preconditions": ["Automation Practice page is open and no radio is selected"],
+      "preconditions": [
+        "Automation Practice page is open and no radio is selected"
+      ],
       "testData": { "sequence": ["radio1", "radio2", "radio3"] },
       "steps": [
         { "action": "Select Radio1", "expected": "Only Radio1 is selected" },
@@ -53,7 +58,10 @@
         { "action": "Select Radio3" }
       ],
       "expectedResult": "Only Radio3 is selected. Radio1 and Radio2 are not selected.",
-      "automation": { "status": "Automated", "spec": "tests/radio/radios.spec.ts" }
+      "automation": {
+        "status": "Automated",
+        "spec": "scripts/radio/radios.spec.ts"
+      }
     },
     {
       "id": "TC-RADIO-003",
@@ -71,7 +79,10 @@
         { "action": "Click Radio3 again" }
       ],
       "expectedResult": "Radio3 stays selected and Radio1 and Radio2 stay unselected.",
-      "automation": { "status": "Automated", "spec": "tests/radio/radios.spec.ts" }
+      "automation": {
+        "status": "Automated",
+        "spec": "scripts/radio/radios.spec.ts"
+      }
     }
   ]
 }

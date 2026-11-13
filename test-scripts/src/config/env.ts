@@ -1,11 +1,12 @@
+import path from 'node:path';
 import dotenv from 'dotenv';
 
-dotenv.config({ quiet: true });
+dotenv.config({ path: path.resolve(process.cwd(), 'env/.env'), quiet: true });
 
 function readRequired(name: string): string {
   const value = process.env[name];
   if (!value) {
-    throw new Error(`Missing required environment variable "${name}". Copy .env.example to .env and set it.`);
+    throw new Error(`Missing required environment variable "${name}". Copy env/.env.example to env/.env and set it.`);
   }
   return value;
 }

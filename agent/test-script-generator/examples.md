@@ -35,11 +35,11 @@ Observed: promo input `placeholder="Enter promo code"`, an `Apply` button, a `.p
   "testData": { "promoCode": "INVALID2026" },
   "steps": [{ "action": "Enter an invalid promo code and click Apply" }],
   "expectedResult": "'Invalid code ..!' is shown and the discount remains 0%.",
-  "automation": { "status": "Automated", "spec": "tests/greenkart/checkout.spec.ts" }
+  "automation": { "status": "Automated", "spec": "scripts/greenkart/checkout.spec.ts" }
 }
 ```
 
-## 6. Page object (`src/pages/greenkart/GreenKartCartPage.ts`)
+## 6. Page object (`test-scripts/src/pages/greenkart/GreenKartCartPage.ts`)
 
 ```ts
 export class GreenKartCartPage extends BasePage {
@@ -64,7 +64,7 @@ export class GreenKartCartPage extends BasePage {
 }
 ```
 
-## 6. Test data (`src/data/greenKart.ts`)
+## 6. Test data (`test-scripts/src/data/greenKart.ts`)
 
 ```ts
 export const promoCodes = {
@@ -73,7 +73,7 @@ export const promoCodes = {
 } as const;
 ```
 
-## 6. Spec (`tests/greenkart/checkout.spec.ts`)
+## 6. Spec (`test-scripts/scripts/greenkart/checkout.spec.ts`)
 
 ```ts
 import { test, expect } from '@fixtures/test';

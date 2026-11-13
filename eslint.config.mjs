@@ -4,7 +4,7 @@ import playwright from 'eslint-plugin-playwright';
 import prettier from 'eslint-config-prettier';
 
 export default tseslint.config(
-  { ignores: ['node_modules/', 'reports/', 'playwright-report/', 'test-results/'] },
+  { ignores: ['**/node_modules/**', '**/reports/**', '**/playwright-report/**', '**/test-results/**'] },
   eslint.configs.recommended,
   ...tseslint.configs.strict,
   {
@@ -17,7 +17,7 @@ export default tseslint.config(
   },
   {
     ...playwright.configs['flat/recommended'],
-    files: ['tests/**/*.ts'],
+    files: ['test-scripts/scripts/**/*.ts'],
     rules: {
       ...playwright.configs['flat/recommended'].rules,
       'playwright/no-wait-for-timeout': 'error',
@@ -29,7 +29,7 @@ export default tseslint.config(
     },
   },
   {
-    files: ['src/**/*.ts'],
+    files: ['test-scripts/src/**/*.ts'],
     plugins: playwright.configs['flat/recommended'].plugins,
     rules: {
       'playwright/no-wait-for-timeout': 'error',

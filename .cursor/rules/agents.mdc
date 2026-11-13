@@ -1,0 +1,6 @@
+---
+description: Repository agent instructions live in agent/agent/AGENTS.md
+alwaysApply: true
+---
+
+Follow `agent/agent/AGENTS.md` for how this repository is organized, which skill to use, the commands to run, and the test rules. Do not look for an `AGENTS.md` at the repository root.
