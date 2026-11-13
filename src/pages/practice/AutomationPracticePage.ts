@@ -8,6 +8,7 @@ export type DialogDetails = { type: string; message: string };
 export class AutomationPracticePage extends RoutablePage {
   protected readonly path = '/AutomationPractice/';
 
+  readonly radioGroup: Locator;
   readonly countryAutocomplete: Locator;
   readonly autocompleteOptions: Locator;
   readonly dropdown: Locator;
@@ -25,6 +26,7 @@ export class AutomationPracticePage extends RoutablePage {
 
   constructor(page: Page) {
     super(page);
+    this.radioGroup = page.locator('#radio-btn-example');
     this.countryAutocomplete = page.getByPlaceholder('Type to Select Countries');
     this.autocompleteOptions = page.locator('.ui-autocomplete .ui-menu-item');
     this.dropdown = page.locator('#dropdown-class-example');

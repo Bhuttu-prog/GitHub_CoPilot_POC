@@ -1,0 +1,77 @@
+{
+  "$schema": "../.cursor/skills/ui-test-case-generator/test-case.schema.json",
+  "module": "RADIO",
+  "feature": "Radio Button Example",
+  "application": "https://rahulshettyacademy.com/AutomationPractice/",
+  "requirements": [
+    {
+      "id": "REQ-RADIO-01",
+      "description": "The Radio Button Example offers Radio1, Radio2 and Radio3, and none is selected when the page opens."
+    },
+    {
+      "id": "REQ-RADIO-02",
+      "description": "Selecting a radio button selects only that option and clears the previous selection."
+    },
+    {
+      "id": "REQ-RADIO-03",
+      "description": "Clicking a radio button that is already selected leaves that selection in place."
+    }
+  ],
+  "testCases": [
+    {
+      "id": "TC-RADIO-001",
+      "title": "Radio group starts with three options and none selected",
+      "requirementIds": ["REQ-RADIO-01"],
+      "priority": "P2",
+      "severity": "Major",
+      "type": "UI",
+      "technique": "Checklist",
+      "tags": ["@smoke", "@regression", "@radio"],
+      "preconditions": ["Automation Practice page is open"],
+      "testData": { "options": ["Radio1", "Radio2", "Radio3"] },
+      "steps": [
+        { "action": "Read the Radio Button Example legend and option labels" },
+        { "action": "Inspect the checked state of Radio1, Radio2 and Radio3" }
+      ],
+      "expectedResult": "The group shows Radio1, Radio2 and Radio3, and none of them is selected.",
+      "automation": { "status": "Automated", "spec": "tests/radio/radios.spec.ts" }
+    },
+    {
+      "id": "TC-RADIO-002",
+      "title": "Selecting another radio clears the previous selection",
+      "requirementIds": ["REQ-RADIO-02"],
+      "priority": "P1",
+      "severity": "Major",
+      "type": "Functional",
+      "technique": "State Transition",
+      "tags": ["@smoke", "@regression", "@radio"],
+      "preconditions": ["Automation Practice page is open and no radio is selected"],
+      "testData": { "sequence": ["radio1", "radio2", "radio3"] },
+      "steps": [
+        { "action": "Select Radio1", "expected": "Only Radio1 is selected" },
+        { "action": "Select Radio2", "expected": "Only Radio2 is selected" },
+        { "action": "Select Radio3" }
+      ],
+      "expectedResult": "Only Radio3 is selected. Radio1 and Radio2 are not selected.",
+      "automation": { "status": "Automated", "spec": "tests/radio/radios.spec.ts" }
+    },
+    {
+      "id": "TC-RADIO-003",
+      "title": "Clicking the selected radio keeps that radio selected",
+      "requirementIds": ["REQ-RADIO-03"],
+      "priority": "P2",
+      "severity": "Minor",
+      "type": "Functional",
+      "technique": "State Transition",
+      "tags": ["@regression", "@radio"],
+      "preconditions": ["Automation Practice page is open"],
+      "testData": { "radio": "radio3" },
+      "steps": [
+        { "action": "Select Radio3" },
+        { "action": "Click Radio3 again" }
+      ],
+      "expectedResult": "Radio3 stays selected and Radio1 and Radio2 stay unselected.",
+      "automation": { "status": "Automated", "spec": "tests/radio/radios.spec.ts" }
+    }
+  ]
+}

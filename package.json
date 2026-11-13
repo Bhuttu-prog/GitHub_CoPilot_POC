@@ -8,6 +8,7 @@
     "test:smoke": "playwright test --grep @smoke",
     "test:regression": "playwright test --grep @regression",
     "test:a11y": "playwright test --grep @a11y",
+    "test:dropdowns": "playwright test tests/dropdowns/dropdowns.spec.ts --headed",
     "test:chromium": "playwright test --project=chromium",
     "test:cross-browser": "playwright test --project=chromium --project=firefox --project=webkit",
     "test:headed": "playwright test --headed --project=chromium",
